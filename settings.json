@@ -1,4 +1,5 @@
 {
+  "adminPassword": "admin",
   "storeName": "Game Zone Store",
   "currency": "USD",
   "enableCod": true,

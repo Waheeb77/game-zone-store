@@ -9,7 +9,8 @@ let settings = {
     bankName: "مصرف الراجحي",
     bankHolder: "مؤسسة منطقة الألعاب التجارية",
     bankIban: "SA9380000123456789012345",
-    logo: ""
+    logo: "",
+    adminPassword: "admin"
 };
 let uploadedProductImageBase64 = null;
 let currentTab = 'overview';
@@ -51,11 +52,52 @@ async function apiPost(endpoint, fallbackKey, data) {
     return { success: true, localOnly: true };
 }
 
+// Admin Authentication functions
+function checkAdminAuthentication() {
+    const isAuth = sessionStorage.getItem('admin_authenticated');
+    const overlay = document.getElementById('admin-login-overlay');
+    if (isAuth === 'true') {
+        if (overlay) overlay.style.display = 'none';
+    } else {
+        if (overlay) overlay.style.display = 'flex';
+    }
+}
+
+function handleAdminLogin(event) {
+    event.preventDefault();
+    const passwordField = document.getElementById('admin-pass-field');
+    const errorMsg = document.getElementById('login-error-msg');
+    const enteredPassword = passwordField.value;
+    const correctPassword = settings.adminPassword || "admin";
+    
+    if (enteredPassword === correctPassword) {
+        sessionStorage.setItem('admin_authenticated', 'true');
+        checkAdminAuthentication();
+        errorMsg.style.display = 'none';
+    } else {
+        errorMsg.style.display = 'block';
+        passwordField.value = '';
+        passwordField.focus();
+    }
+}
+
 // Page Init
 window.addEventListener('DOMContentLoaded', () => {
+    // Check auth
+    checkAdminAuthentication();
+    
+    // Hook up login form
+    const loginForm = document.getElementById('admin-login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleAdminLogin);
+    }
+
     // Set Current Date
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('current-date').innerText = new Date().toLocaleDateString('ar-SA', options);
+    const dateEl = document.getElementById('current-date');
+    if (dateEl) {
+        dateEl.innerText = new Date().toLocaleDateString('ar-SA', options);
+    }
 
     // Initial API Calls
     fetchSettings().then(() => {
@@ -138,6 +180,7 @@ function populateSettingsForm() {
     document.getElementById('settings-bank-name').value = settings.bankName || '';
     document.getElementById('settings-bank-holder').value = settings.bankHolder || '';
     document.getElementById('settings-bank-iban').value = settings.bankIban || '';
+    document.getElementById('settings-admin-password').value = settings.adminPassword || 'admin';
 
     // Show/hide bank inputs
     toggleSettingsBankSection(settings.enableBank ?? true);
@@ -230,7 +273,8 @@ async function saveStoreSettings(event) {
         bankName: document.getElementById('settings-bank-name').value,
         bankHolder: document.getElementById('settings-bank-holder').value,
         bankIban: document.getElementById('settings-bank-iban').value,
-        logo: settings.logo || ""
+        logo: settings.logo || "",
+        adminPassword: document.getElementById('settings-admin-password').value
     };
 
     try {

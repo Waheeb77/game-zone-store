@@ -66,7 +66,8 @@ let settings = {
     bankName: "مصرف الراجحي",
     bankHolder: "مؤسسة منطقة الألعاب التجارية",
     bankIban: "SA9380000123456789012345",
-    logo: ""
+    logo: "",
+    adminPassword: "admin"
 };
 let cart = [];
 let selectedCategory = "all";
