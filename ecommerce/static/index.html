@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Zone Store | متجر قطع ومستلزمات ألعاب الكمبيوتر</title>
+    <!-- FontAwesome for Gaming Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated background glowing circles -->
+    <div class="bg-glow-container">
+        <div class="bg-glow-1"></div>
+        <div class="bg-glow-2"></div>
+    </div>
+
+    <!-- Header Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo-container" id="nav-logo">
+                <i class="fa-solid fa-gamepad logo-icon"></i>
+                <span class="logo-text" id="store-title-logo">Game Zone<span> Store</span></span>
+            </a>
+            
+            <div class="nav-actions">
+                <!-- Currency Switcher -->
+                <div class="currency-switcher" id="store-currency-switcher">
+                    <button type="button" class="currency-btn active" id="cur-btn-usd" onclick="changeStoreCurrency('USD')">USD ($)</button>
+                    <button type="button" class="currency-btn" id="cur-btn-sar" onclick="changeStoreCurrency('SAR')">SAR (ر.س)</button>
+                </div>
+                
+                <div class="cart-icon-wrapper" id="cart-trigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping cart-icon"></i>
+                    <span class="cart-badge" id="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Welcome Section -->
+        <section class="hero-section">
+            <div class="container">
+                <span class="hero-subtitle">متجر الألعاب الاحترافي الأول</span>
+                <h1 class="hero-title" id="hero-store-title">Game Zone Store</h1>
+                <p class="hero-desc">اكتشف تشكيلتنا الاحترافية من قطع غيار ومستلزمات ألعاب الكمبيوتر. نوفر قطعاً جديدة ومستعملة مضمونة بأسعار منافسة مع دعم فني متكامل.</p>
+            </div>
+        </section>
+
+        <!-- Store Controls (Search & Category Filters) -->
+        <section class="store-controls container">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search-input" placeholder="ابحث عن كرت شاشة، معالج، لوحة أم..." oninput="filterProducts()">
+            </div>
+            <div class="categories-container" id="categories-list">
+                <button class="category-btn active" onclick="selectCategory('all', this)">الكل</button>
+                <button class="category-btn" onclick="selectCategory('جديد', this)"><i class="fa-solid fa-sparkles" style="margin-left: 5px;"></i>قطع جديدة</button>
+                <button class="category-btn" onclick="selectCategory('مستعمل', this)"><i class="fa-solid fa-recycle" style="margin-left: 5px;"></i>قطع مستعملة</button>
+            </div>
+        </section>
+
+        <!-- Products Grid -->
+        <section class="products-section container">
+            <div class="products-grid" id="products-grid-container">
+                <!-- Products will be generated dynamically via JavaScript -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-gamepad fa-spin" style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary-color);"></i>
+                    <p>جاري تحميل ترسانة الألعاب...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <i class="fa-solid fa-gamepad" style="color: var(--primary-color);"></i>
+                <span id="footer-store-name">Game Zone<span> Store</span></span>
+            </div>
+            <p class="footer-copy">جميع الحقوق محفوظة &copy; 2026. متجر قطع ومستلزمات الألعاب الاحترافي.</p>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer (Slides-in from the Right) -->
+    <div class="cart-drawer-overlay" id="cart-drawer-overlay" onclick="toggleCart(false)">
+        <div class="cart-drawer" onclick="event.stopPropagation()">
+            <div class="cart-header">
+                <h2><i class="fa-solid fa-cart-shopping"></i> عربة التسوق</h2>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="cart-items-list" id="cart-items-container">
+                <!-- Dynamic cart items will render here -->
+                <div class="empty-cart-message">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <p>عربتك فارغة من العتاد حالياً</p>
+                </div>
+            </div>
+
+            <div class="cart-footer">
+                <!-- Promo Code Box -->
+                <div style="display: flex; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;">
+                    <input type="text" id="cart-promo-input" placeholder="كوبون الخصم (مثال: GAME20)" style="flex-grow: 1; padding: 0.5rem 0.8rem; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-family: var(--font-cairo); font-size: 0.8rem; outline: none;">
+                    <button type="button" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 8px; font-weight:700;" onclick="applyPromoCode()">تطبيق</button>
+                </div>
+                <!-- Discount Row -->
+                <div id="cart-discount-row" style="display: none; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #00f5d4; margin-bottom: 8px; font-weight:600;">
+                    <span>خصم الكوبون (<span id="discount-pct-label">0</span>%):</span>
+                    <span id="cart-discount-value">-0 $</span>
+                </div>
+
+                <div class="cart-summary-row">
+                    <span>المجموع الإجمالي:</span>
+                    <span class="cart-summary-total" id="cart-total-value">0 $</span>
+                </div>
+                <button class="checkout-btn" id="cart-checkout-btn" onclick="openCheckoutModal()" disabled>
+                    <i class="fa-solid fa-credit-card"></i> إتمام عملية الشراء
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal Dialog -->
+    <div class="modal-overlay" id="checkout-modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إتمام طلب الشراء والدفع</h3>
+                <button class="close-btn" onclick="closeCheckoutModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <!-- Standard form inputs -->
+            <div class="modal-body" id="checkout-form-body">
+                <form id="checkout-form" onsubmit="submitOrder(event)">
+                    <!-- Contact Info -->
+                    <h4 style="margin-bottom: 1rem; color: #fff; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;"><i class="fa-solid fa-user-tie" style="color: var(--primary-color); margin-left: 8px;"></i>بيانات الشحن والتوصيل</h4>
+                    
+                    <div class="form-group">
+                        <label for="checkout-name">الاسم الكامل *</label>
+                        <input type="text" id="checkout-name" required placeholder="أدخل اسمك ثلاثي">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="checkout-phone">رقم الجوال *</label>
+                            <input type="tel" id="checkout-phone" required placeholder="05xxxxxxxx" pattern="^05[0-9]{8}$" title="رقم جوال سعودي يبدأ بـ 05 ويتكون من 10 أرقام">
+                        </div>
+                        <div class="form-group">
+                            <label for="checkout-city">المدينة *</label>
+                            <input type="text" id="checkout-city" required placeholder="مثال: الرياض">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="checkout-address">العنوان التفصيلي للحي والشارع *</label>
+                        <textarea id="checkout-address" rows="2" required placeholder="مثال: حي الياسمين، شارع الملقا، مبنى رقم 12"></textarea>
+                    </div>
+
+                    <!-- Payment Selector -->
+                    <h4 style="margin: 1.5rem 0 1rem 0; color: #fff; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;"><i class="fa-solid fa-wallet" style="color: var(--primary-color); margin-left: 8px;"></i>طريقة الدفع المفضلة</h4>
+                    
+                    <div class="payment-tabs" id="checkout-payment-tabs">
+                        <!-- Will display based on settings -->
+                        <button type="button" class="payment-tab-btn active" id="tab-btn-cod" onclick="switchPaymentTab('cod')">
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+                            <span>الدفع عند الاستلام</span>
+                        </button>
+                        <button type="button" class="payment-tab-btn" id="tab-btn-bank" onclick="switchPaymentTab('bank')">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>تحويل بنكي</span>
+                        </button>
+                        <button type="button" class="payment-tab-btn" id="tab-btn-card" onclick="switchPaymentTab('card')">
+                            <i class="fa-solid fa-credit-card"></i>
+                            <span>بطاقة مدى / ائتمان</span>
+                        </button>
+                    </div>
+
+                    <!-- Payment Panels -->
+                    <!-- 1. Cash on Delivery Panel -->
+                    <div class="payment-panel active" id="panel-cod">
+                        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+                            <i class="fa-solid fa-circle-info" style="color: var(--primary-color); margin-left: 5px;"></i>
+                            الدفع نقداً أو ببطاقة مدى عند استلام الطلب من المندوب. لا توجد رسوم إضافية على التوصيل.
+                        </p>
+                    </div>
+
+                    <!-- 2. Bank Transfer Panel -->
+                    <div class="payment-panel" id="panel-bank">
+                        <div class="bank-info-card">
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">يرجى تحويل المبلغ المطلوب إلى الحساب البنكي التالي:</p>
+                            
+                            <div class="bank-detail-row">
+                                <span class="bank-label">اسم البنك</span>
+                                <span class="bank-value" id="bank-name-display">مصرف الراجحي</span>
+                            </div>
+                            <div class="bank-detail-row">
+                                <span class="bank-label">صاحب الحساب</span>
+                                <span class="bank-value" id="bank-holder-display">مؤسسة منطقة الألعاب التجارية</span>
+                            </div>
+                            <div class="bank-detail-row">
+                                <span class="bank-label">رقم الآيبان IBAN</span>
+                                <span class="bank-value">
+                                    <span id="bank-iban-display" style="font-family: monospace; font-size: 0.95rem; direction: ltr;">SA9380000123456789012345</span>
+                                    <button type="button" class="copy-btn" onclick="copyIban()"><i class="fa-solid fa-copy"></i></button>
+                                </span>
+                            </div>
+
+                            <!-- Receipt upload simulator -->
+                            <div class="receipt-upload-box" onclick="simulateReceiptUpload()">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span>اضغط هنا لرفع صورة إيصال التحويل (اختياري)</span>
+                                <input type="file" id="bank-receipt-file" style="display: none;" accept="image/*" onchange="handleReceiptUploaded(this)">
+                            </div>
+                            <div class="receipt-preview" id="receipt-upload-preview">
+                                <span><i class="fa-solid fa-circle-check"></i> تم إرفاق صورة إيصال التحويل بنجاح</span>
+                                <button type="button" class="btn-danger" style="padding: 2px 8px; font-size: 0.75rem;" onclick="removeReceipt()">حذف</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Credit Card / مدى Panel -->
+                    <div class="payment-panel" id="panel-card">
+                        <!-- Virtual 3D Card Simulator -->
+                        <div class="card-container" onclick="flipCreditCard()">
+                            <div class="credit-card-model" id="credit-card-3d">
+                                <!-- Card Front -->
+                                <div class="card-front">
+                                    <div class="card-brand-row">
+                                        <div class="card-chip"></div>
+                                        <div class="card-logo-txt">مدى | <span>Pay</span></div>
+                                    </div>
+                                    <div class="card-number-display" id="v-card-number">•••• •••• •••• ••••</div>
+                                    <div class="card-holder-info">
+                                        <div>
+                                            <div class="card-holder-label">صاحب البطاقة</div>
+                                            <div class="card-holder-name-display" id="v-card-holder">CARDHOLDER NAME</div>
+                                        </div>
+                                        <div class="card-expiry-display">
+                                            <div class="card-holder-label">الانتهاء</div>
+                                            <div class="card-expiry-val" id="v-card-expiry">MM/YY</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card Back -->
+                                <div class="card-back">
+                                    <div class="card-black-strip"></div>
+                                    <div class="card-signature-strip">
+                                        <div class="card-cvv-display" id="v-card-cvv">•••</div>
+                                    </div>
+                                    <div class="card-back-text">
+                                        تخضع هذه البطاقة لشروط الاستخدام المعتمدة. للاستخدام الفردي فقط. صممت لأغراض المحاكاة والشراء التجريبي.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Inputs -->
+                        <div class="form-group">
+                            <label for="card-holder">اسم حامل البطاقة (بالإنجليزية كما هو مطبوع) *</label>
+                            <input type="text" id="card-holder" placeholder="MOHAMMED AL-OTAIBI" oninput="updateCardDetails()" onfocus="setCardFlip(false)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="card-number">رقم البطاقة *</label>
+                            <input type="text" id="card-number" placeholder="4000 1234 5678 9010" maxlength="19" oninput="updateCardDetails()" onfocus="setCardFlip(false)">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="card-expiry">تاريخ الانتهاء *</label>
+                                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" oninput="updateCardDetails()" onfocus="setCardFlip(false)">
+                            </div>
+                            <div class="form-group">
+                                <label for="card-cvv">الرمز السري (CVV) *</label>
+                                <input type="password" id="card-cvv" placeholder="•••" maxlength="3" oninput="updateCardDetails()" onfocus="setCardFlip(true)" onblur="setCardFlip(false)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Checkout Summary & Action -->
+                    <div style="background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; border: 1px solid rgba(255,255,255,0.05)">
+                        <span>المبلغ الإجمالي المطلوب دفعه:</span>
+                        <span style="color: var(--text-gold);" id="checkout-total-price">0 $</span>
+                    </div>
+
+                    <button type="submit" class="checkout-btn" id="submit-order-btn">
+                        <i class="fa-solid fa-circle-check"></i> تأكيد الطلب والدفع
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success screen -->
+            <div class="modal-body" id="checkout-success-body" style="display: none;">
+                <div class="checkout-success-view">
+                    <div class="success-icon-container">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h4 class="success-title">تم إرسال طلبك بنجاح!</h4>
+                    <p class="success-desc">شكراً لثقتك بمتجرنا. تم استلام طلبك برقم <strong id="success-order-id">#1001</strong> بنجاح. سيقوم فريقنا بالتواصل معك قريباً لتأكيد الشحن والتوصيل.</p>
+                    <button class="btn-primary" style="padding: 0.8rem 2.5rem; border-radius: 50px; margin-top: 1rem;" onclick="closeCheckoutModal()">متابعة التسوق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core App Javascript -->
+    <script src="app.js"></script>
+</body>
+</html>

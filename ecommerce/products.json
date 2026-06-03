@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "title": "كرت شاشة NVIDIA GeForce RTX 4080 Super",
+    "category": "جديد",
+    "price": 1050,
+    "stock": 4,
+    "description": "<b>كرت الشاشة الخارق للألعاب والبث المباشر</b><br>ذاكرة 16GB GDDR6X. يدعم تقنية تتبع الأشعة Ray Tracing و DLSS 3.0. تبريد احترافي ثلاثي المراوح للحفاظ على استقرار الأداء تحت الضغط العالي.",
+    "image": "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 2,
+    "title": "معالج Intel Core i9-14900K",
+    "category": "جديد",
+    "price": 530,
+    "stock": 6,
+    "description": "<b>أقوى معالجات الجيل الرابع عشر من إنتل</b><br>24 نواة و 32 مسار سرعة تصل حتى 6.0 GHz. مثالي للألعاب الثقيلة وصناعة المحتوى ورندرة الفيديو ثلاثي الأبعاد.",
+    "image": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 3,
+    "title": "لوحة أم ASUS ROG Strix Z790-E Gaming WiFi",
+    "category": "مستعمل",
+    "stock": 2,
+    "description": "<b>لوحة أم احترافية كسر السرعة - حالة ممتازة شبه جديدة</b><br>دعم ذواكر DDR5 ومنفذ PCIe 5.0. واي فاي 6E مدمج، مع تبريد متكامل للمنافذ والـ M.2. الملحقات كاملة والكرتون الأصلي متوفر.",
+    "price": 240,
+    "image": "https://images.unsplash.com/photo-1562976540-1502c2145186?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 4,
+    "title": "ذاكرة عشوائية G.Skill Trident Z5 RGB DDR5 32GB",
+    "category": "جديد",
+    "price": 125,
+    "stock": 10,
+    "description": "<b>ذواكر DDR5 فائقة السرعة مع إضاءة RGB خلابة</b><br>سعة 32 جيجابايت (قطعتين كل منها 16 جيجابايت) بتردد 6000MHz. تدعم ملف كسر السرعة Intel XMP 3.0 لأداء ألعاب فائق الاستقرار.",
+    "image": "https://images.unsplash.com/photo-1562976540-07fdd1094399?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 5,
+    "title": "مزود طاقة Corsair RM850x 850W Gold",
+    "category": "مستعمل",
+    "stock": 3,
+    "description": "<b>باور سبلاي Corsair RM850x شهادة ذهبية - مستعمل 3 أشهر فقط</b><br>قدرة 850 واط، كابلات قابلة للفصل بالكامل (Full Modular). هادئ تماماً وحالة نظيفة جداً وخالي من أي عيوب تشغيلية.",
+    "price": 85,
+    "image": "https://images.unsplash.com/photo-1624705002806-5d72df19c3ad?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 6,
+    "title": "كيبورد ألعاب ميكانيكي وماوس احترافي Razer",
+    "category": "مستعمل",
+    "stock": 1,
+    "description": "<b>باقة Razer للاعبين المحترفين - كيبورد أسود ميكانيكي وماوس DeathAdder</b><br>إضاءة Chroma RGB بالكامل. كلاهما بحالة ممتازة مستعمل لفترة قصيرة جداً ومضمون النظافة والأداء السريع.",
+    "price": 110,
+    "image": "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&auto=format&fit=crop&q=80"
+  }
+]

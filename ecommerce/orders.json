@@ -1,0 +1,47 @@
+[
+  {
+    "id": 982134,
+    "customerName": "عبدالرحمن الشمري",
+    "customerPhone": "0554321098",
+    "customerCity": "الرياض",
+    "customerAddress": "حي الملقا، شارع أنس بن مالك",
+    "items": [
+      {
+        "id": 1,
+        "title": "كرت شاشة NVIDIA GeForce RTX 4080 Super",
+        "price": 1050,
+        "quantity": 1
+      }
+    ],
+    "totalPrice": 1050,
+    "currency": "USD",
+    "paymentMethod": "cod",
+    "paymentDetails": {},
+    "status": "pending",
+    "date": "2026-06-03T11:45:00.000Z"
+  },
+  {
+    "id": 651239,
+    "customerName": "فاطمة العتيبي",
+    "customerPhone": "0543210987",
+    "customerCity": "جدة",
+    "customerAddress": "حي النعيم، شارع الأمل",
+    "items": [
+      {
+        "id": 4,
+        "title": "ذاكرة عشوائية G.Skill Trident Z5 RGB DDR5 32GB",
+        "price": 469,
+        "quantity": 2
+      }
+    ],
+    "totalPrice": 938,
+    "currency": "SAR",
+    "paymentMethod": "card",
+    "paymentDetails": {
+      "cardSuffix": "9812",
+      "holderName": "FATIMAH AL-OTAIBI"
+    },
+    "status": "completed",
+    "date": "2026-06-03T11:55:00.000Z"
+  }
+]

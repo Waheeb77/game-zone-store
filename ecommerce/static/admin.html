@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الإدارية | Game Zone Store</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-color: #06070a;">
+    <!-- Sleek Cyberpunk Admin Login Overlay -->
+    <div id="admin-login-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #05060b; z-index: 99999; display: flex; justify-content: center; align-items: center; padding: 20px; direction: rtl;">
+        <div style="background: rgba(13, 15, 28, 0.95); border: 1px solid rgba(0, 245, 212, 0.2); border-radius: 20px; width: 100%; max-width: 420px; padding: 2.5rem; box-shadow: 0 0 30px rgba(0, 245, 212, 0.15); text-align: center;">
+            <div style="margin-bottom: 2rem;">
+                <div style="font-size: 3rem; color: #00f5d4; text-shadow: 0 0 15px rgba(0, 245, 212, 0.4); margin-bottom: 10px;"><i class="fa-solid fa-shield-halved"></i></div>
+                <h2 style="font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 1.6rem; color: #fff; margin-bottom: 5px;">حماية الإدارة</h2>
+                <p style="font-family: 'Cairo', sans-serif; font-size: 0.85rem; color: #9ca3af;">الرجاء إدخال كلمة مرور المدير للوصول للوحة التحكم</p>
+            </div>
+            <form id="admin-login-form">
+                <div style="margin-bottom: 1.5rem; text-align: right;">
+                    <label for="admin-pass-field" style="font-family: 'Cairo', sans-serif; font-size: 0.85rem; color: #9ca3af; display: block; margin-bottom: 8px;">كلمة المرور *</label>
+                    <input type="password" id="admin-pass-field" required placeholder="••••••••" style="width: 100%; padding: 0.8rem 1.2rem; background: rgba(5, 6, 11, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; color: #fff; font-size: 1rem; outline: none; transition: all 0.3s; text-align: center; letter-spacing: 3px;" onfocus="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 0 10px rgba(0, 245, 212, 0.2)'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.boxShadow='none'">
+                    <span id="login-error-msg" style="color: #ef4444; font-size: 0.8rem; display: block; margin-top: 8px; font-weight: 600; text-align: center; display: none;">❌ كلمة المرور غير صحيحة!</span>
+                </div>
+                <button type="submit" style="width: 100%; padding: 0.9rem; background: #00f5d4; color: #000; border: none; border-radius: 10px; font-family: 'Cairo', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px;" onmouseover="this.style.background='#00d8bc'; this.style.boxShadow='0 0 15px rgba(0, 245, 212, 0.4)'" onmouseout="this.style.background='#00f5d4'; this.style.boxShadow='none'">
+                    <i class="fa-solid fa-key"></i> دخول لوحة التحكم
+                </button>
+            </form>
+            <div style="margin-top: 1.5rem;">
+                <a href="index.html" style="font-family: 'Cairo', sans-serif; font-size: 0.85rem; color: #9ca3af; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.color='#a855f7'" onmouseout="this.style.color='#9ca3af'"><i class="fa-solid fa-arrow-left" style="transform: scaleX(-1);"></i> العودة لمتجر الزبائن</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar">
+            <div>
+                <div class="admin-brand">
+                    <i class="fa-solid fa-gamepad" style="color: var(--primary-color); margin-left: 8px;"></i>
+                    <span>Game<span>Zone</span></span>
+                </div>
+                <nav>
+                    <ul class="admin-menu">
+                        <li>
+                            <a href="#" class="admin-menu-link active" onclick="switchAdminTab('overview', this)">
+                                <i class="fa-solid fa-chart-pie"></i> الإحصائيات العامة
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="admin-menu-link" onclick="switchAdminTab('products', this)">
+                                <i class="fa-solid fa-box"></i> إدارة المنتجات
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="admin-menu-link" onclick="switchAdminTab('orders', this)">
+                                <i class="fa-solid fa-receipt"></i> قائمة الطلبات
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="admin-menu-link" onclick="switchAdminTab('settings', this)">
+                                <i class="fa-solid fa-gears"></i> إعدادات المتجر
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="admin-back-shop">
+                <a href="index.html" class="nav-btn" style="width: 100%; justify-content: center; text-decoration: none;">
+                    <i class="fa-solid fa-arrow-left" style="transform: scaleX(-1);"></i> العودة للمتجر
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="admin-content" style="padding-top: 2.5rem;">
+            <!-- Header bar -->
+            <header class="admin-header">
+                <div class="admin-title-area">
+                    <h1 id="admin-current-tab-title">لوحة التحكم العامة</h1>
+                    <p id="admin-current-tab-desc">متابعة أداء المتجر، المبيعات وإدارة المنتجات والطلبات بشكل كامل.</p>
+                </div>
+                <div style="background: var(--bg-card); padding: 0.6rem 1.2rem; border-radius: 10px; border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-calendar-days" style="color: var(--primary-color); margin-left: 5px;"></i>
+                    <span id="current-date">اليوم، 3 يونيو 2026</span>
+                </div>
+            </header>
+
+            <!-- 1. OVERVIEW TAB -->
+            <div class="admin-tab-content active" id="tab-overview">
+                <!-- KPI cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span class="stat-label">إجمالي المبيعات</span>
+                            <span class="stat-value" id="kpi-revenue">0 ر.س</span>
+                        </div>
+                        <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span class="stat-label">عدد الطلبات</span>
+                            <span class="stat-value" id="kpi-orders">0</span>
+                        </div>
+                        <div class="stat-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span class="stat-label">المنتجات النشطة</span>
+                            <span class="stat-value" id="kpi-products">0</span>
+                        </div>
+                        <div class="stat-icon"><i class="fa-solid fa-box-open"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span class="stat-label">متوسط قيمة الطلب</span>
+                            <span class="stat-value" id="kpi-avg-order">0 ر.س</span>
+                        </div>
+                        <div class="stat-icon"><i class="fa-solid fa-calculator"></i></div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders and Products Table -->
+                <div class="action-header-row">
+                    <h3 style="font-family: var(--font-tajawal); font-size: 1.2rem; font-weight: 700;">أحدث الطلبات المستلمة</h3>
+                    <button class="btn-secondary" onclick="document.querySelectorAll('.admin-menu-link')[2].click()">عرض الكل</button>
+                </div>
+                
+                <div class="admin-card-table" style="margin-bottom: 2rem;">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th>
+                                    <th>العميل</th>
+                                    <th>طريقة الدفع</th>
+                                    <th>تاريخ الطلب</th>
+                                    <th>القيمة الإجمالية</th>
+                                    <th>حالة الطلب</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-orders-table-body">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--text-muted);">لا توجد طلبات مسجلة حالياً.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. PRODUCTS TAB -->
+            <div class="admin-tab-content" id="tab-products">
+                <div class="action-header-row">
+                    <h3 style="font-family: var(--font-tajawal); font-size: 1.2rem; font-weight: 700;">جميع المنتجات</h3>
+                    <button class="btn-primary" onclick="openProductModal('add')">
+                        <i class="fa-solid fa-circle-plus"></i> إضافة منتج جديد
+                    </button>
+                </div>
+
+                <div class="admin-card-table">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الصورة</th>
+                                    <th>اسم المنتج</th>
+                                    <th>التصنيف</th>
+                                    <th>السعر</th>
+                                    <th>المخزون</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body">
+                                <!-- Generated Dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. ORDERS TAB -->
+            <div class="admin-tab-content" id="tab-orders">
+                <div class="action-header-row" style="flex-wrap: wrap; gap: 10px;">
+                    <h3 style="font-family: var(--font-tajawal); font-size: 1.2rem; font-weight: 700;">جميع الطلبات المستلمة</h3>
+                    <!-- Search & Filter Orders Box -->
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="text" id="order-search-input" placeholder="بحث باسم العميل أو رقم الطلب..." oninput="filterOrdersList()" style="padding: 0.5rem 1rem; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); color: #fff; font-family: var(--font-cairo); font-size: 0.85rem; outline: none; width: 220px;">
+                        <select id="order-status-filter" onchange="filterOrdersList()" style="padding: 0.5rem 1rem; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); color: #fff; font-family: var(--font-cairo); font-size: 0.85rem; outline: none; cursor: pointer;">
+                            <option value="all">كل الحالات</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="completed">مكتمل</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="admin-card-table">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th>
+                                    <th>العميل</th>
+                                    <th>رقم الجوال</th>
+                                    <th>طريقة الدفع</th>
+                                    <th>التاريخ</th>
+                                    <th>القيمة</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body">
+                                <!-- Generated Dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. SETTINGS TAB -->
+            <div class="admin-tab-content" id="tab-settings">
+                <form id="store-settings-form" onsubmit="saveStoreSettings(event)">
+                    <!-- Global Store Config -->
+                    <div class="settings-section-card">
+                        <h4 class="settings-section-title"><i class="fa-solid fa-sliders"></i> إعدادات الهوية العامة</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="settings-store-name">اسم المتجر *</label>
+                                <input type="text" id="settings-store-name" required placeholder="Game Zone Store">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-currency">عملة المتجر *</label>
+                                <input type="text" id="settings-currency" required placeholder="USD">
+                            </div>
+                        </div>
+                        <!-- Logo Upload Section -->
+                        <div class="form-group" style="margin-top: 15px;">
+                            <label>شعار المتجر (Logo)</label>
+                            <div class="image-uploader-wrapper">
+                                <div class="image-preview-container" id="settings-logo-preview-box">
+                                    <i class="fa-solid fa-gamepad"></i>
+                                </div>
+                                <div class="image-upload-control" onclick="triggerSettingsLogoSelect()">
+                                    <i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary-color);"></i>
+                                    <p>اضغط لرفع شعار مخصص للمتجر</p>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">يقبل صور PNG/JPG (سيتم تصغيرها وتوسيمها كرمز للمتجر)</span>
+                                    <input type="file" id="settings-logo-input" style="display: none;" accept="image/*" onchange="handleSettingsLogoUploaded(this)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Toggles -->
+                    <div class="settings-section-card">
+                        <h4 class="settings-section-title"><i class="fa-solid fa-wallet"></i> طرق الدفع المتاحة للعملاء</h4>
+                        
+                        <div class="switch-group">
+                            <div class="switch-label">
+                                <span class="switch-title">الدفع عند الاستلام (COD)</span>
+                                <span class="switch-desc">تمكين خيار الدفع نقداً أو ببطاقة مدى عند استلام المنتج.</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settings-enable-cod" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="switch-group">
+                            <div class="switch-label">
+                                <span class="switch-title">التحويل البنكي (Bank Transfer)</span>
+                                <span class="switch-desc">تمكين التحويل المباشر لحساباتك البنكية وعرض بيانات الآيبان.</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settings-enable-bank" checked onchange="toggleSettingsBankSection(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="switch-group">
+                            <div class="switch-label">
+                                <span class="switch-title">البطاقة الائتمانية / مدى / Apple Pay</span>
+                                <span class="switch-desc">تمكين بوابة الدفع المباشرة ومحاكاة الدفع بالبطاقات البنكية.</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settings-enable-card" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Bank details info form -->
+                    <div class="settings-section-card" id="settings-bank-info-card">
+                        <h4 class="settings-section-title"><i class="fa-solid fa-building-columns"></i> تفاصيل الحساب البنكي للتلقي</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="settings-bank-name">اسم البنك *</label>
+                                <input type="text" id="settings-bank-name" placeholder="مثال: مصرف الراجحي">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-bank-holder">اسم صاحب الحساب *</label>
+                                <input type="text" id="settings-bank-holder" placeholder="الاسم الكامل للشركة أو المؤسسة">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="settings-bank-iban">رقم الآيبان الدولي (IBAN) *</label>
+                            <input type="text" id="settings-bank-iban" placeholder="SA9380000xxxxxxxxxxxxxxx" style="direction: ltr; font-family: monospace;">
+                        </div>
+                    </div>
+
+                    <!-- Admin Security settings -->
+                    <div class="settings-section-card">
+                        <h4 class="settings-section-title"><i class="fa-solid fa-lock"></i> حماية لوحة التحكم</h4>
+                        <div class="form-group">
+                            <label for="settings-admin-password">كلمة مرور لوحة التحكم *</label>
+                            <input type="password" id="settings-admin-password" placeholder="مثال: admin123" required style="letter-spacing: 2px;">
+                            <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">هذه الكلمة تحمي لوحة التحكم من وصول الزوار غير المصرح لهم. (الكلمة الافتراضية هي admin)</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="display: flex; justify-content: flex-end; gap: 15px;">
+                        <button type="submit" class="btn-primary" id="save-settings-btn" style="padding: 0.8rem 2.5rem;">
+                            <i class="fa-solid fa-floppy-disk"></i> حفظ كافة الإعدادات
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Product Add/Edit Dialog Modal -->
+    <div class="modal-overlay" id="product-modal-overlay">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 id="product-modal-title">إضافة منتج جديد</h3>
+                <button class="close-btn" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="product-form" onsubmit="saveProduct(event)">
+                    <input type="hidden" id="product-id-field">
+                    
+                    <div class="form-group">
+                        <label for="product-title">اسم المنتج *</label>
+                        <input type="text" id="product-title" required placeholder="مثال: كرت شاشة NVIDIA RTX 4070">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="product-category">التصنيف *</label>
+                            <select id="product-category" required>
+                                <option value="جديد">جديد</option>
+                                <option value="مستعمل">مستعمل</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-price">السعر بالدولار ($) *</label>
+                            <input type="number" id="product-price" required min="1" placeholder="مثال: 299">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-stock">الكمية المتوفرة في المخزن *</label>
+                        <input type="number" id="product-stock" required min="0" placeholder="مثال: 5" value="5">
+                    </div>
+
+                    <!-- Visual image uploader with canvas compression -->
+                    <div class="form-group">
+                        <label>صورة المنتج *</label>
+                        <div class="image-uploader-wrapper">
+                            <div class="image-preview-container" id="prod-img-preview-box">
+                                <i class="fa-solid fa-images"></i>
+                            </div>
+                            <div class="image-upload-control" onclick="triggerProductImageSelect()">
+                                <i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary-color);"></i>
+                                <p>اضغط لرفع صورة المنتج أو اسحبها هنا</p>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 4px;">سيتم ضغط وتصغير حجم الصورة تلقائياً لسرعة الأداء</span>
+                                <input type="file" id="product-file-input" style="display: none;" accept="image/*" onchange="handleProductImageUploaded(this)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rich Text Editor for description formatting -->
+                    <div class="form-group">
+                        <label for="product-desc-editor">وصف وتنسيق تفاصيل المنتج *</label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="editor-btn" onclick="formatText('bold')" title="نص عريض"><i class="fa-solid fa-bold"></i></button>
+                            <button type="button" class="editor-btn" onclick="formatText('italic')" title="نص مائل"><i class="fa-solid fa-italic"></i></button>
+                            <button type="button" class="editor-btn" onclick="formatText('header')" title="عنوان فرعي"><i class="fa-solid fa-heading"></i></button>
+                            <button type="button" class="editor-btn" onclick="formatText('bullet')" title="قائمة تعداد"><i class="fa-solid fa-list-ul"></i></button>
+                            <button type="button" class="editor-btn" onclick="formatText('color')" title="تمييز ذهبي"><i class="fa-solid fa-palette"></i></button>
+                            <button type="button" class="editor-btn" onclick="formatText('newline')" title="سطر جديد"><i class="fa-solid fa-paragraph"></i></button>
+                        </div>
+                        <textarea id="product-desc-editor" class="editor-textarea" required placeholder="اكتب مواصفات وتفاصيل المنتج هنا. استخدم شريط الأدوات أعلاه للتنسيق..."></textarea>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">* يدعم هذا المحرر وسوم HTML البسيطة لعرض تفاصيل أنيقة للعملاء.</div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 2rem;">
+                        <button type="button" class="btn-secondary" onclick="closeProductModal()">إلغاء</button>
+                        <button type="submit" class="btn-primary" id="product-save-btn">حفظ المنتج</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail View Modal -->
+    <div class="modal-overlay" id="order-details-modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>تفاصيل الطلب المستلم</h3>
+                <button class="close-btn" onclick="closeOrderDetailsModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="order-details-modal-body">
+                <!-- Content generated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Admin Javascript -->
+    <script src="admin.js"></script>
+</body>
+</html>
