@@ -1287,22 +1287,71 @@ input:checked + .slider:before {
 }
 
 .success-icon-container {
-    width: 80px;
-    height: 80px;
-    background: rgba(16, 185, 129, 0.1);
-    border: 2px solid #10b981;
-    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2.5rem;
-    color: #10b981;
-    animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin: 0 auto;
 }
 
-@keyframes scaleIn {
-    from { transform: scale(0.6); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+.checkmark-svg {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 3;
+    stroke: #10b981;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px #10b981;
+    animation: fill-checkmark .4s ease-in-out .4s forwards, scale-checkmark .3s ease-in-out .9s both;
+}
+
+.checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 3;
+    stroke-miterlimit: 10;
+    stroke: #10b981;
+    fill: none;
+    animation: stroke-circle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke-width: 4;
+    stroke: #fff;
+    animation: stroke-check 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke-circle {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes stroke-check {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fill-checkmark {
+    100% {
+        box-shadow: inset 0px 0px 0px 40px #10b981;
+    }
+}
+
+@keyframes scale-checkmark {
+    0%, 100% {
+        transform: none;
+    }
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
 }
 
 .success-title {
@@ -2240,6 +2289,60 @@ html[dir="ltr"] .payment-tab-btn:not(:last-child) {
         background-color: transparent !important;
     }
 
+    .invoice-center-title {
+        text-align: center !important;
+        flex: 1 !important;
+        background-color: transparent !important;
+    }
+
+    .invoice-title-en {
+        font-family: 'Outfit', 'Inter', sans-serif !important;
+        font-size: 1.15rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 2px !important;
+        color: #000000 !important;
+        text-transform: uppercase !important;
+        background-color: transparent !important;
+        margin-bottom: 2px !important;
+    }
+
+    .invoice-subtitle-en {
+        font-size: 0.65rem !important;
+        color: #444444 !important;
+        letter-spacing: 1px !important;
+        text-transform: uppercase !important;
+        background-color: transparent !important;
+    }
+
+    .invoice-signature-area {
+        display: flex !important;
+        justify-content: space-between !important;
+        margin-top: 25px !important;
+        padding-top: 15px !important;
+        background-color: transparent !important;
+    }
+
+    .signature-box {
+        width: 170px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 30px !important;
+        background-color: transparent !important;
+    }
+
+    .signature-title {
+        font-size: 0.68rem !important;
+        color: #000000 !important;
+        font-weight: 700 !important;
+        background-color: transparent !important;
+    }
+
+    .signature-line {
+        border-bottom: 1px dashed #000000 !important;
+        width: 100% !important;
+        background-color: transparent !important;
+    }
+
     .invoice-meta {
         text-align: left !important;
         background-color: transparent !important;
@@ -2514,4 +2617,53 @@ html[dir="rtl"] .invoice-summary {
     margin-top: 40px;
     border-top: 1px dashed #eee;
     padding-top: 20px;
+}
+
+/* Screen Layout for Elegant invoice-center-title & signature blocks */
+.invoice-center-title {
+    text-align: center;
+    flex: 1;
+}
+
+.invoice-title-en {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    color: #111;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.invoice-subtitle-en {
+    font-size: 0.72rem;
+    color: #666;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.invoice-signature-area {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.signature-box {
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.signature-title {
+    font-size: 0.8rem;
+    color: #555;
+    font-weight: 600;
+}
+
+.signature-line {
+    border-bottom: 1px dashed #ccc;
+    width: 100%;
 }
