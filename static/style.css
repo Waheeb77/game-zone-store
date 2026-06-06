@@ -1835,6 +1835,14 @@ tr:hover td {
 
 /* Responsive Overrides */
 @media (max-width: 768px) {
+    /* Prevent overall horizontal scroll */
+    html, body {
+        overflow-x: hidden !important;
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
     /* Keep navbar as a clean horizontal row on mobile */
     .navbar .container {
         flex-direction: row !important;
@@ -1956,15 +1964,30 @@ tr:hover td {
         margin-bottom: 1rem !important;
         border-radius: 0 !important;
         overflow: visible !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
     
     .payment-tab-btn {
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
         border-radius: 8px !important;
-        padding: 0.5rem 0.3rem !important;
+        padding: 0.5rem 0.2rem !important;
         font-size: 0.7rem !important;
         white-space: normal !important; /* Allow text wrapping on mobile */
         text-align: center !important;
+        box-sizing: border-box !important;
+    }
+    
+    .payment-tab-btn span {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        display: block !important;
+        text-align: center !important;
+        max-width: 100% !important;
+        font-size: 0.68rem !important;
+        line-height: 1.2 !important;
     }
     
     .payment-tab-btn:not(:last-child) {
