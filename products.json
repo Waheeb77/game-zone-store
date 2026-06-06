@@ -2,55 +2,100 @@
   {
     "id": 1,
     "title": "كرت شاشة NVIDIA GeForce RTX 4080 Super",
+    "title_en": "NVIDIA GeForce RTX 4080 Super Graphics Card",
     "category": "جديد",
     "price": 1050,
     "stock": 4,
     "description": "<b>كرت الشاشة الخارق للألعاب والبث المباشر</b><br>ذاكرة 16GB GDDR6X. يدعم تقنية تتبع الأشعة Ray Tracing و DLSS 3.0. تبريد احترافي ثلاثي المراوح للحفاظ على استقرار الأداء تحت الضغط العالي.",
+    "description_en": "<b>The ultimate graphics card for gaming and streaming.</b><br>16GB GDDR6X memory. Supports Ray Tracing and DLSS 3.0. Professional triple-fan cooling for stable performance under high load.",
     "image": "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=600&auto=format&fit=crop&q=80"
   },
   {
     "id": 2,
     "title": "معالج Intel Core i9-14900K",
+    "title_en": "Intel Core i9-14900K Processor",
     "category": "جديد",
     "price": 530,
     "stock": 6,
     "description": "<b>أقوى معالجات الجيل الرابع عشر من إنتل</b><br>24 نواة و 32 مسار سرعة تصل حتى 6.0 GHz. مثالي للألعاب الثقيلة وصناعة المحتوى ورندرة الفيديو ثلاثي الأبعاد.",
+    "description_en": "<b>Intel's most powerful 14th Gen processor.</b><br>24 cores and 32 threads, clock speeds up to 6.0 GHz. Ideal for heavy gaming, content creation, and 3D rendering.",
     "image": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600&auto=format&fit=crop&q=80"
   },
   {
     "id": 3,
     "title": "لوحة أم ASUS ROG Strix Z790-E Gaming WiFi",
+    "title_en": "ASUS ROG Strix Z790-E Gaming WiFi Motherboard",
     "category": "مستعمل",
+    "price": 240,
     "stock": 2,
     "description": "<b>لوحة أم احترافية كسر السرعة - حالة ممتازة شبه جديدة</b><br>دعم ذواكر DDR5 ومنفذ PCIe 5.0. واي فاي 6E مدمج، مع تبريد متكامل للمنافذ والـ M.2. الملحقات كاملة والكرتون الأصلي متوفر.",
-    "price": 240,
+    "description_en": "<b>Professional overclocking motherboard - Excellent like-new condition.</b><br>Supports DDR5 memory and PCIe 5.0 slot. Integrated WiFi 6E, with complete cooling for ports and M.2. All accessories and original box included.",
     "image": "https://images.unsplash.com/photo-1562976540-1502c2145186?w=600&auto=format&fit=crop&q=80"
   },
   {
     "id": 4,
     "title": "ذاكرة عشوائية G.Skill Trident Z5 RGB DDR5 32GB",
+    "title_en": "G.Skill Trident Z5 RGB DDR5 32GB RAM",
     "category": "جديد",
     "price": 125,
     "stock": 10,
     "description": "<b>ذواكر DDR5 فائقة السرعة مع إضاءة RGB خلابة</b><br>سعة 32 جيجابايت (قطعتين كل منها 16 جيجابايت) بتردد 6000MHz. تدعم ملف كسر السرعة Intel XMP 3.0 لأداء ألعاب فائق الاستقرار.",
+    "description_en": "<b>Ultra-fast DDR5 RAM with stunning RGB lighting.</b><br>32GB capacity (2x16GB) at 6000MHz frequency. Supports Intel XMP 3.0 profile for highly stable gaming performance.",
     "image": "https://images.unsplash.com/photo-1562976540-07fdd1094399?w=600&auto=format&fit=crop&q=80"
   },
   {
     "id": 5,
     "title": "مزود طاقة Corsair RM850x 850W Gold",
+    "title_en": "Corsair RM850x 850W Gold Power Supply",
     "category": "مستعمل",
+    "price": 85,
     "stock": 3,
     "description": "<b>باور سبلاي Corsair RM850x شهادة ذهبية - مستعمل 3 أشهر فقط</b><br>قدرة 850 واط، كابلات قابلة للفصل بالكامل (Full Modular). هادئ تماماً وحالة نظيفة جداً وخالي من أي عيوب تشغيلية.",
-    "price": 85,
+    "description_en": "<b>Corsair RM850x Gold certified PSU - Used for 3 months only.</b><br>850W capacity, fully modular cables. Completely quiet, very clean condition, free of any operational defects.",
     "image": "https://images.unsplash.com/photo-1624705002806-5d72df19c3ad?w=600&auto=format&fit=crop&q=80"
   },
   {
     "id": 6,
     "title": "كيبورد ألعاب ميكانيكي وماوس احترافي Razer",
+    "title_en": "Razer Mechanical Gaming Keyboard & Mouse Bundle",
     "category": "مستعمل",
+    "price": 110,
     "stock": 1,
     "description": "<b>باقة Razer للاعبين المحترفين - كيبورد أسود ميكانيكي وماوس DeathAdder</b><br>إضاءة Chroma RGB بالكامل. كلاهما بحالة ممتازة مستعمل لفترة قصيرة جداً ومضمون النظافة والأداء السريع.",
-    "price": 110,
+    "description_en": "<b>Razer bundle for professional gamers - Black mechanical keyboard & DeathAdder mouse.</b><br>Full Chroma RGB lighting. Both are in excellent condition, lightly used, guaranteed clean and fast performance.",
     "image": "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 7,
+    "title": "سماعة رأس ألعاب HyperX Cloud III اللاسلكية",
+    "title_en": "HyperX Cloud III Wireless Gaming Headset",
+    "category": "إكسسوارات",
+    "price": 140,
+    "stock": 5,
+    "description": "<b>سماعة الألعاب الاحترافية اللاسلكية الأكثر راحة</b><br>عمر بطارية يصل إلى 120 ساعة. صوت مجسم DTS Head:X ثلاثي الأبعاد وميكروفون نقي جداً ومقاوم للضوضاء.",
+    "description_en": "<b>The most comfortable professional wireless gaming headset.</b><br>Up to 120 hours of battery life. DTS Head:X Spatial Audio and ultra-clear noise-cancelling microphone.",
+    "image": "https://images.unsplash.com/photo-1608156639585-b3a032ef9689?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 8,
+    "title": "ماوس قيمنق لاسلكي Logitech G Pro X Superlight 2",
+    "title_en": "Logitech G Pro X Superlight 2 Wireless Gaming Mouse",
+    "category": "إكسسوارات",
+    "price": 160,
+    "stock": 3,
+    "description": "<b>أخف وأسرع ماوس ألعاب احترافي من لوجيتك</b><br>وزن 60 جرام فقط. مستشعر HERO 2 فائق الدقة بسرعة 32,000 DPI واتصال لاسلكي فائق السرعة LIGHTSPEED.",
+    "description_en": "<b>Logitech's lightest and fastest professional gaming mouse.</b><br>Weighs only 60 grams. Super precise HERO 2 sensor with 32,000 DPI and LIGHTSPEED ultra-fast wireless.",
+    "image": "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 9,
+    "title": "تجميعة الوحش الاحترافية RTX 4080 Super + i9",
+    "title_en": "The Beast Complete Build RTX 4080 Super + i9",
+    "category": "تجميعات",
+    "price": 2450,
+    "stock": 2,
+    "description": "<b>جهاز كمبيوتر متكامل جاهز للتشغيل بأعلى أداء</b><br>كرت شاشة RTX 4080 Super 16GB مع معالج Core i9-14900K، ذاكرة 32GB DDR5، قرص تخزين 2TB NVMe SSD، تبريد مائي مدمج، كيس ألعاب RGB احترافي.",
+    "description_en": "<b>Complete plug-and-play gaming PC built for ultimate performance.</b><br>RTX 4080 Super 16GB, Core i9-14900K, 32GB DDR5 RAM, 2TB NVMe SSD, liquid cooler, premium RGB gaming chassis.",
+    "image": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600&auto=format&fit=crop&q=80"
   }
 ]

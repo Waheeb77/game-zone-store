@@ -23,6 +23,148 @@ let settings = {
 let uploadedProductImageBase64 = null;
 let currentTab = 'overview';
 
+// Translation Dictionary for Admin
+const i18nAdmin = {
+  ar: {
+    admin_tab_overview_title: "لوحة التحكم العامة",
+    admin_tab_overview_desc: "متابعة أداء المتجر، المبيعات وإدارة المنتجات والطلبات بشكل كامل.",
+    admin_tab_products_title: "إدارة المنتجات",
+    admin_tab_products_desc: "إضافة وتعديل وحذف منتجات المتجر مع تحديث المخزون والأسعار.",
+    admin_tab_orders_title: "قائمة الطلبات المستلمة",
+    admin_tab_orders_desc: "مراجعة الطلبات، وتأكيد التحويلات البنكية وإيصالات الدفع وتغيير الحالات.",
+    admin_tab_settings_title: "إعدادات متجر ألعاب الكمبيوتر",
+    admin_tab_settings_desc: "تخصيص طرق الدفع، معدلات التحويل للعملات، الحسابات والبيانات البنكية وشعار المتجر.",
+    
+    // Sidebar
+    admin_menu_overview: "الإحصائيات العامة",
+    admin_menu_products: "إدارة المنتجات",
+    admin_menu_orders: "قائمة الطلبات",
+    admin_menu_settings: "إعدادات المتجر",
+    admin_return_store: "العودة للمتجر",
+    
+    // Login
+    admin_protection: "حماية الإدارة",
+    admin_enter_password: "الرجاء إدخال كلمة مرور المدير للوصول للوحة التحكم",
+    admin_password_label: "كلمة المرور *",
+    admin_login_btn: "دخول لوحة التحكم",
+    
+    // KPI
+    kpi_revenue: "إجمالي المبيعات",
+    kpi_orders: "عدد الطلبات",
+    kpi_active_products: "المنتجات النشطة",
+    kpi_avg_order: "متوسط قيمة الطلب",
+    
+    // General
+    table_order_id: "رقم الطلب",
+    table_customer: "العميل",
+    table_payment_method: "طريقة الدفع",
+    table_date: "تاريخ الطلب",
+    table_total_price: "القيمة الإجمالية",
+    table_status: "حالة الطلب",
+    table_actions: "الإجراءات"
+  },
+  en: {
+    admin_tab_overview_title: "General Dashboard",
+    admin_tab_overview_desc: "Monitor store performance, sales, products, and incoming orders in real-time.",
+    admin_tab_products_title: "Product Management",
+    admin_tab_products_desc: "Add, modify, and remove store products with inventory levels and prices.",
+    admin_tab_orders_title: "Received Orders List",
+    admin_tab_orders_desc: "Review orders, verify bank transfer receipts, and update order statuses.",
+    admin_tab_settings_title: "Store Settings",
+    admin_tab_settings_desc: "Customize payment options, exchange rates, bank credentials, and store logo.",
+    
+    // Sidebar
+    admin_menu_overview: "Statistics & Overview",
+    admin_menu_products: "Manage Products",
+    admin_menu_orders: "Orders List",
+    admin_menu_settings: "Store Settings",
+    admin_return_store: "Return to Store",
+    
+    // Login
+    admin_protection: "Admin Security",
+    admin_enter_password: "Please enter the admin password to access the dashboard",
+    admin_password_label: "Password *",
+    admin_login_btn: "Enter Dashboard",
+    
+    // KPI
+    kpi_revenue: "Total Sales",
+    kpi_orders: "Total Orders",
+    kpi_active_products: "Active Products",
+    kpi_avg_order: "Avg Order Value",
+    
+    // General
+    table_order_id: "Order ID",
+    table_customer: "Customer",
+    table_payment_method: "Payment Method",
+    table_date: "Order Date",
+    table_total_price: "Total Value",
+    table_status: "Order Status",
+    table_actions: "Actions"
+  }
+};
+
+let currentLang = localStorage.getItem('store_lang') || 'ar';
+
+function changeAdminLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('store_lang', lang);
+    
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+    
+    // Set active class on language toggle buttons
+    const arBtn = document.getElementById('lang-btn-ar');
+    const enBtn = document.getElementById('lang-btn-en');
+    if (arBtn && enBtn) {
+        arBtn.classList.remove('active');
+        enBtn.classList.remove('active');
+        if (lang === 'ar') arBtn.classList.add('active');
+        else enBtn.classList.add('active');
+    }
+    
+    translateAdminPage();
+    
+    // Update active tab headers
+    const title = document.getElementById('admin-current-tab-title');
+    const desc = document.getElementById('admin-current-tab-desc');
+    if (title && desc) {
+        title.innerText = i18nAdmin[currentLang][`admin_tab_${currentTab}_title`] || title.innerText;
+        desc.innerText = i18nAdmin[currentLang][`admin_tab_${currentTab}_desc`] || desc.innerText;
+    }
+    
+    // Update current date
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateEl = document.getElementById('current-date');
+    if (dateEl) {
+        dateEl.innerText = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US', options);
+    }
+    
+    // Re-render components
+    if (currentTab === 'overview') fetchOrders();
+    else if (currentTab === 'products') renderProductsTable();
+    else if (currentTab === 'orders') renderOrdersTable();
+}
+
+function translateAdminPage() {
+    const elements = document.querySelectorAll('[data-i18n]');
+    elements.forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18nAdmin[currentLang] && i18nAdmin[currentLang][key]) {
+            const icon = el.querySelector('i');
+            if (icon) {
+                const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                if (textNode) {
+                    textNode.nodeValue = " " + i18nAdmin[currentLang][key];
+                } else {
+                    el.innerHTML = icon.outerHTML + " " + i18nAdmin[currentLang][key];
+                }
+            } else {
+                el.innerText = i18nAdmin[currentLang][key];
+            }
+        }
+    });
+}
+
 // Hybrid API and LocalStorage helper functions for static page safety
 async function apiGet(endpoint, fallbackKey, defaultVal) {
     try {
@@ -100,17 +242,33 @@ window.addEventListener('DOMContentLoaded', () => {
         loginForm.addEventListener('submit', handleAdminLogin);
     }
 
+    // Set active language switcher class
+    const arBtn = document.getElementById('lang-btn-ar');
+    const enBtn = document.getElementById('lang-btn-en');
+    if (arBtn && enBtn) {
+        arBtn.classList.remove('active');
+        enBtn.classList.remove('active');
+        if (currentLang === 'ar') arBtn.classList.add('active');
+        else enBtn.classList.add('active');
+    }
+
+    // Set document lang and dir
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = currentLang;
+
     // Set Current Date
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const dateEl = document.getElementById('current-date');
     if (dateEl) {
-        dateEl.innerText = new Date().toLocaleDateString('ar-SA', options);
+        dateEl.innerText = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US', options);
     }
 
     // Initial API Calls
     fetchSettings().then(() => {
         fetchProducts().then(() => {
-            fetchOrders();
+            fetchOrders().then(() => {
+                translateAdminPage();
+            });
         });
     });
 });
@@ -154,20 +312,20 @@ function switchAdminTab(tabName, element) {
     const desc = document.getElementById('admin-current-tab-desc');
     
     if (tabName === 'overview') {
-        title.innerText = "لوحة التحكم العامة";
-        desc.innerText = "متابعة أداء المتجر، المبيعات وإدارة المنتجات والطلبات بشكل كامل.";
+        title.innerText = i18nAdmin[currentLang].admin_tab_overview_title;
+        desc.innerText = i18nAdmin[currentLang].admin_tab_overview_desc;
         fetchOrders();
     } else if (tabName === 'products') {
-        title.innerText = "إدارة المنتجات";
-        desc.innerText = "أضف، عدل أو احذف المنتجات المعروضة في المتجر للعملاء.";
+        title.innerText = i18nAdmin[currentLang].admin_tab_products_title;
+        desc.innerText = i18nAdmin[currentLang].admin_tab_products_desc;
         renderProductsTable();
     } else if (tabName === 'orders') {
-        title.innerText = "الطلبات المستلمة";
-        desc.innerText = "مراجعة وتأكيد طلبات الشراء، وتغيير حالتها أو تتبع بيانات العملاء ودفعاتهم.";
+        title.innerText = i18nAdmin[currentLang].admin_tab_orders_title;
+        desc.innerText = i18nAdmin[currentLang].admin_tab_orders_desc;
         renderOrdersTable();
     } else if (tabName === 'settings') {
-        title.innerText = "إعدادات المتجر";
-        desc.innerText = "تعديل هوية المتجر البصرية، الاسم، وتفعيل أو تعطيل خيارات الدفع والبيانات البنكية.";
+        title.innerText = i18nAdmin[currentLang].admin_tab_settings_title;
+        desc.innerText = i18nAdmin[currentLang].admin_tab_settings_desc;
         populateSettingsForm();
     }
 }
