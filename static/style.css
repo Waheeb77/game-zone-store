@@ -1990,7 +1990,22 @@ html[dir="ltr"] .payment-tab-btn:not(:last-child) {
         font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
     }
 
-    /* Hide everything on screen */
+    /* Hide background pseudo-elements that cause dark shadows */
+    body::before, body::after {
+        display: none !important;
+        content: none !important;
+        background: none !important;
+    }
+
+    /* Hide screen layout elements completely to clear print space */
+    .admin-container,
+    .modal-overlay,
+    #admin-login-overlay,
+    .bg-glow-container {
+        display: none !important;
+    }
+
+    /* Hide everything else on screen */
     body * {
         visibility: hidden;
     }
@@ -1998,8 +2013,7 @@ html[dir="ltr"] .payment-tab-btn:not(:last-child) {
     /* Show only the invoice container */
     #invoice-print-template, 
     #invoice-print-template * {
-        visibility: visible;
-        background-color: transparent !important;
+        visibility: visible !important;
         color: #000000 !important;
         box-shadow: none !important;
         text-shadow: none !important;
@@ -2038,6 +2052,7 @@ html[dir="ltr"] .payment-tab-btn:not(:last-child) {
         display: flex !important;
         justify-content: space-between !important;
         align-items: center !important;
+        background: #ffffff !important;
         background-color: #ffffff !important;
     }
 
@@ -2087,7 +2102,7 @@ html[dir="ltr"] .payment-tab-btn:not(:last-child) {
     .invoice-block {
         background: #ffffff !important;
         background-color: #ffffff !important;
-        border: 1px solid #cccccc !important;
+        border: 1.5px solid #000000 !important;
         border-radius: 6px !important;
         padding: 6px 8px !important;
     }
@@ -2095,7 +2110,7 @@ html[dir="ltr"] .payment-tab-btn:not(:last-child) {
     .invoice-block h4 {
         font-size: 0.78rem !important;
         color: #000000 !important;
-        border-bottom: 1px solid #dddddd !important;
+        border-bottom: 1px solid #111111 !important;
         padding-bottom: 3px !important;
         margin-bottom: 5px !important;
         background-color: transparent !important;
@@ -2128,7 +2143,7 @@ html[dir="ltr"] .payment-tab-btn:not(:last-child) {
 
     .invoice-table td {
         padding: 5px 8px !important;
-        border-bottom: 1px solid #dddddd !important;
+        border-bottom: 1px solid #000000 !important;
         color: #000000 !important;
         font-size: 0.7rem !important;
         background-color: transparent !important;
@@ -2169,9 +2184,9 @@ html[dir="ltr"] .payment-tab-btn:not(:last-child) {
     .invoice-footer-note {
         text-align: center !important;
         font-size: 0.68rem !important;
-        color: #555555 !important;
+        color: #000000 !important;
         margin-top: 15px !important;
-        border-top: 1px dashed #cccccc !important;
+        border-top: 1.5px dashed #000000 !important;
         padding-top: 8px !important;
         background-color: transparent !important;
     }
