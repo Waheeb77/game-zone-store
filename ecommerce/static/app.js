@@ -67,7 +67,15 @@ let settings = {
     bankHolder: "مؤسسة منطقة الألعاب التجارية",
     bankIban: "SA9380000123456789012345",
     logo: "",
-    adminPassword: "admin"
+    adminPassword: "admin",
+    usdToSarRate: 3.75,
+    usdToYerRate: 1600.0,
+    enableBcash: true,
+    enableQurooshi: true,
+    enableKuraimi: true,
+    bcashNumber: "770000000",
+    qurooshiNumber: "771000000",
+    kuraimiNumber: "3000000"
 };
 let cart = [];
 let selectedCategory = "all";
@@ -180,25 +188,43 @@ function applySettingsUI() {
     if (bHolder) bHolder.innerText = settings.bankHolder;
     if (bIban) bIban.innerText = settings.bankIban;
 
+    // Update Yemeni bank details display
+    const bcashNum = document.getElementById('bcash-number-display');
+    const qurooshiNum = document.getElementById('qurooshi-number-display');
+    const kuraimiNum = document.getElementById('kuraimi-number-display');
+    if (bcashNum) bcashNum.innerText = settings.bcashNumber || '770000000';
+    if (qurooshiNum) qurooshiNum.innerText = settings.qurooshiNumber || '771000000';
+    if (kuraimiNum) kuraimiNum.innerText = settings.kuraimiNumber || '3000000';
+
     // Update payment tabs visibility
     const tabCod = document.getElementById('tab-btn-cod');
     const tabBank = document.getElementById('tab-btn-bank');
     const tabCard = document.getElementById('tab-btn-card');
+    const tabBcash = document.getElementById('tab-btn-bcash');
+    const tabQurooshi = document.getElementById('tab-btn-qurooshi');
+    const tabKuraimi = document.getElementById('tab-btn-kuraimi');
 
     if (tabCod) tabCod.style.display = settings.enableCod ? 'flex' : 'none';
     if (tabBank) tabBank.style.display = settings.enableBank ? 'flex' : 'none';
     if (tabCard) tabCard.style.display = settings.enableCard ? 'flex' : 'none';
+    if (tabBcash) tabBcash.style.display = settings.enableBcash ? 'flex' : 'none';
+    if (tabQurooshi) tabQurooshi.style.display = settings.enableQurooshi ? 'flex' : 'none';
+    if (tabKuraimi) tabKuraimi.style.display = settings.enableKuraimi ? 'flex' : 'none';
 
     // Update currency switcher buttons active class
     const usdBtn = document.getElementById('cur-btn-usd');
     const sarBtn = document.getElementById('cur-btn-sar');
-    if (usdBtn && sarBtn) {
+    const yerBtn = document.getElementById('cur-btn-yer');
+    if (usdBtn && sarBtn && yerBtn) {
+        usdBtn.classList.remove('active');
+        sarBtn.classList.remove('active');
+        yerBtn.classList.remove('active');
         if (activeCurrency === 'USD') {
             usdBtn.classList.add('active');
-            sarBtn.classList.remove('active');
-        } else {
+        } else if (activeCurrency === 'SAR') {
             sarBtn.classList.add('active');
-            usdBtn.classList.remove('active');
+        } else if (activeCurrency === 'YER') {
+            yerBtn.classList.add('active');
         }
     }
 
@@ -207,6 +233,9 @@ function applySettingsUI() {
     if (!settings.enableCod) {
         if (settings.enableBank) defaultTab = 'bank';
         else if (settings.enableCard) defaultTab = 'card';
+        else if (settings.enableBcash) defaultTab = 'bcash';
+        else if (settings.enableQurooshi) defaultTab = 'qurooshi';
+        else if (settings.enableKuraimi) defaultTab = 'kuraimi';
     }
     switchPaymentTab(defaultTab);
     updateCartUI();
@@ -219,19 +248,41 @@ function changeStoreCurrency(currency) {
     // Manage switcher button states
     const usdBtn = document.getElementById('cur-btn-usd');
     const sarBtn = document.getElementById('cur-btn-sar');
+    const yerBtn = document.getElementById('cur-btn-yer');
     
-    if (usdBtn && sarBtn) {
+    if (usdBtn && sarBtn && yerBtn) {
+        usdBtn.classList.remove('active');
+        sarBtn.classList.remove('active');
+        yerBtn.classList.remove('active');
         if (currency === 'USD') {
             usdBtn.classList.add('active');
-            sarBtn.classList.remove('active');
-        } else {
+        } else if (currency === 'SAR') {
             sarBtn.classList.add('active');
-            usdBtn.classList.remove('active');
+        } else if (currency === 'YER') {
+            yerBtn.classList.add('active');
         }
     }
 
     renderProducts();
     updateCartUI();
+}
+
+// Currency convert helper function
+function convertPrice(priceUSD) {
+    if (activeCurrency === 'SAR') {
+        const rate = settings.usdToSarRate || 3.75;
+        return Math.round(priceUSD * rate);
+    } else if (activeCurrency === 'YER') {
+        const rate = settings.usdToYerRate || 1600.0;
+        return Math.round(priceUSD * rate);
+    }
+    return priceUSD;
+}
+
+function getCurrencySymbol() {
+    if (activeCurrency === 'SAR') return 'ر.س';
+    if (activeCurrency === 'YER') return 'ر.ي';
+    return '$';
 }
 
 // Fetch Products from API
@@ -273,8 +324,8 @@ function renderProducts() {
     }
 
     gridContainer.innerHTML = filtered.map(product => {
-        const displayPrice = activeCurrency === 'SAR' ? Math.round(product.price * 3.75) : product.price;
-        const currencySymbol = activeCurrency === 'SAR' ? 'ر.س' : '$';
+        const displayPrice = convertPrice(product.price);
+        const currencySymbol = getCurrencySymbol();
         const categoryClass = product.category === 'مستعمل' ? 'used-badge' : '';
 
         // Stock labels and visual status
@@ -491,7 +542,7 @@ function updateCartUI() {
                 <p>عربتك فارغة من العتاد حالياً</p>
             </div>
         `;
-        totalVal.innerText = activeCurrency === 'SAR' ? `0 ر.س` : `0 $`;
+        totalVal.innerText = `0 ${getCurrencySymbol()}`;
         checkoutBtn.disabled = true;
         document.getElementById('cart-discount-row').style.display = 'none';
         return;
@@ -504,9 +555,9 @@ function updateCartUI() {
     const finalTotalUSD = Math.max(0, subtotalUSD - discountUSD);
 
     // Apply currency conversions
-    const displayTotal = activeCurrency === 'SAR' ? Math.round(finalTotalUSD * 3.75) : finalTotalUSD;
-    const displayDiscount = activeCurrency === 'SAR' ? Math.round(discountUSD * 3.75) : discountUSD;
-    const currencySymbol = activeCurrency === 'SAR' ? 'ر.س' : '$';
+    const displayTotal = convertPrice(finalTotalUSD);
+    const displayDiscount = convertPrice(discountUSD);
+    const currencySymbol = getCurrencySymbol();
     
     // Manage Coupon Display row
     const discountRow = document.getElementById('cart-discount-row');
@@ -531,7 +582,7 @@ function updateCartUI() {
                 <img src="${item.product.image || 'https://images.unsplash.com/photo-1591488320449-011701bb6704?w=200&auto=format&fit=crop&q=80'}" alt="${item.product.title}" class="cart-item-img">
                 <div class="cart-item-details">
                     <div class="cart-item-title">${item.product.title}</div>
-                    <div class="cart-item-price">${itemPrice.toLocaleString()} ${currencySymbol}</div>
+                    <div class="cart-item-price">${convertPrice(item.product.price).toLocaleString()} ${getCurrencySymbol()}</div>
                     <div class="cart-item-qty">
                         <button class="qty-btn" onclick="changeQuantity(${item.product.id}, -1)">-</button>
                         <span class="qty-val">${item.quantity}</span>
@@ -552,8 +603,8 @@ function openCheckoutModal() {
     const modal = document.getElementById('checkout-modal-overlay');
     
     const finalTotalUSD = getFinalCartTotalUSD();
-    const displayTotal = activeCurrency === 'SAR' ? Math.round(finalTotalUSD * 3.75) : finalTotalUSD;
-    const currencySymbol = activeCurrency === 'SAR' ? 'ر.س' : '$';
+    const displayTotal = convertPrice(finalTotalUSD);
+    const currencySymbol = getCurrencySymbol();
     
     document.getElementById('checkout-total-price').innerText = `${displayTotal.toLocaleString()} ${currencySymbol}`;
     
@@ -707,7 +758,7 @@ async function submitOrder(event) {
 
     let paymentDetails = {};
 
-    if (selectedPaymentMethod === 'bank') {
+    if (['bank', 'bcash', 'qurooshi', 'kuraimi'].includes(selectedPaymentMethod)) {
         paymentDetails = {
             hasReceipt: uploadedReceiptBase64 ? true : false,
             receiptImage: uploadedReceiptBase64
@@ -736,7 +787,7 @@ async function submitOrder(event) {
     }
 
     const finalTotalUSD = getFinalCartTotalUSD();
-    const displayTotal = activeCurrency === 'SAR' ? Math.round(finalTotalUSD * 3.75) : finalTotalUSD;
+    const displayTotal = convertPrice(finalTotalUSD);
 
     const orderId = Math.floor(100000 + Math.random() * 900000);
     const orderData = {
@@ -746,7 +797,7 @@ async function submitOrder(event) {
         customerCity: city,
         customerAddress: address,
         items: cart.map(item => {
-            const itemPrice = activeCurrency === 'SAR' ? Math.round(item.product.price * 3.75) : item.product.price;
+            const itemPrice = convertPrice(item.product.price);
             return {
                 id: item.product.id,
                 title: item.product.title,
