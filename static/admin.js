@@ -603,8 +603,11 @@ function renderRecentOrders() {
                 <td>${statusBadge}</td>
                 <td>
                     <div class="table-actions">
-                        <button class="btn-table-action" onclick="viewOrderDetails(${o.id})" title="عرض التفاصيل">
+                        <button class="btn-table-action" onclick="viewOrderDetails(${o.id})" title="${currentLang === 'ar' ? 'عرض التفاصيل' : 'View Details'}">
                             <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <button class="btn-table-action" onclick="printOrderInvoice(${o.id})" title="${currentLang === 'ar' ? 'طباعة الفاتورة' : 'Print Invoice'}">
+                            <i class="fa-solid fa-print"></i>
                         </button>
                     </div>
                 </td>
@@ -678,11 +681,14 @@ function renderOrdersTable() {
                 <td>${statusBadge}</td>
                 <td>
                     <div class="table-actions">
-                        <button class="btn-table-action" onclick="viewOrderDetails(${o.id})" title="عرض التفاصيل">
+                        <button class="btn-table-action" onclick="viewOrderDetails(${o.id})" title="${currentLang === 'ar' ? 'عرض التفاصيل' : 'View Details'}">
                             <i class="fa-solid fa-eye"></i>
                         </button>
+                        <button class="btn-table-action" onclick="printOrderInvoice(${o.id})" title="${currentLang === 'ar' ? 'طباعة الفاتورة' : 'Print Invoice'}">
+                            <i class="fa-solid fa-print"></i>
+                        </button>
                         ${actionButtons}
-                        <button class="btn-table-action delete" onclick="deleteOrder(${o.id})" title="حذف الطلب">
+                        <button class="btn-table-action delete" onclick="deleteOrder(${o.id})" title="${currentLang === 'ar' ? 'حذف الطلب' : 'Delete Order'}">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -1123,10 +1129,13 @@ function viewOrderDetails(orderId) {
         </div>
 
         <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:2rem;">
+            <button class="btn-primary" onclick="printOrderInvoice(${o.id})" style="background:#a855f7; border-color:#a855f7; color:#fff;">
+                <i class="fa-solid fa-print"></i> ${currentLang === 'ar' ? 'طباعة الفاتورة' : 'Print Invoice'}
+            </button>
             ${o.status === 'pending' 
-                ? `<button class="btn-primary" onclick="completeOrder(${o.id}); closeOrderDetailsModal();"><i class="fa-solid fa-check"></i> تعليم الطلب كمكتمل</button>` 
+                ? `<button class="btn-primary" onclick="completeOrder(${o.id}); closeOrderDetailsModal();"><i class="fa-solid fa-check"></i> ${currentLang === 'ar' ? 'تعليم الطلب كمكتمل' : 'Mark Completed'}</button>` 
                 : ''}
-            <button class="btn-secondary" onclick="closeOrderDetailsModal()">إغلاق النافذة</button>
+            <button class="btn-secondary" onclick="closeOrderDetailsModal()">${currentLang === 'ar' ? 'إغلاق النافذة' : 'Close Window'}</button>
         </div>
     `;
 
@@ -1139,4 +1148,118 @@ function closeOrderDetailsModal() {
     const modal = document.getElementById('order-details-modal-overlay');
     modal.classList.remove('open');
     document.body.style.overflow = '';
+}
+
+// Print Order Invoice Receipt
+function printOrderInvoice(orderId) {
+    const o = orders.find(x => x.id === orderId);
+    if (!o) return;
+
+    const printContainer = document.getElementById('invoice-print-template');
+    if (!printContainer) return;
+
+    // Format Date
+    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    const orderDate = new Date(o.date).toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US', dateOptions);
+
+    // Get Payment Method display text (localized)
+    let pMethodLocal = '';
+    if (o.paymentMethod === 'cod') pMethodLocal = currentLang === 'ar' ? 'الدفع عند الاستلام' : 'Cash on Delivery';
+    else if (o.paymentMethod === 'bank') pMethodLocal = currentLang === 'ar' ? 'تحويل بنكي' : 'Bank Transfer';
+    else if (o.paymentMethod === 'card') pMethodLocal = currentLang === 'ar' ? 'بطاقة مدى / ائتمان' : 'Credit Card / Mada';
+    else if (o.paymentMethod === 'bcash') pMethodLocal = currentLang === 'ar' ? 'B-Cash (بنك البسيري)' : 'B-Cash (Al-Buseiri Bank)';
+    else if (o.paymentMethod === 'qurooshi') pMethodLocal = currentLang === 'ar' ? 'محفظة قروشي (بنك أمجاد)' : 'Qurooshi Wallet (Amjad Bank)';
+    else if (o.paymentMethod === 'kuraimi') pMethodLocal = currentLang === 'ar' ? 'بنك الكريمي' : 'Kuraimi Bank';
+    else pMethodLocal = o.paymentMethod;
+
+    // Currency representation
+    let currencySymbol = '$';
+    if (o.currency === 'SAR') currencySymbol = currentLang === 'ar' ? 'ر.س' : 'SAR';
+    else if (o.currency === 'YER') currencySymbol = currentLang === 'ar' ? 'ر.ي' : 'YER';
+
+    // Logo rendering logic
+    let logoHTML = '';
+    if (settings.logo) {
+        logoHTML = `<img src="${settings.logo}" alt="${settings.storeName}" class="invoice-logo-img">`;
+    } else {
+        logoHTML = `<div class="invoice-logo-txt">${settings.storeName || 'Game Zone'}</div>`;
+    }
+
+    // Items table rows
+    const itemsRows = o.items.map(item => `
+        <tr>
+            <td>${item.title}</td>
+            <td>${item.price.toLocaleString()} ${currencySymbol}</td>
+            <td style="text-align: center;">${item.quantity}</td>
+            <td style="text-align: inherit; font-weight: 700;">${(item.price * item.quantity).toLocaleString()} ${currencySymbol}</td>
+        </tr>
+    `).join('');
+
+    // Build the complete HTML
+    const ar = currentLang === 'ar';
+    const invoiceHTML = `
+        <div class="invoice-container" dir="${ar ? 'rtl' : 'ltr'}">
+            <div class="invoice-header">
+                <div class="invoice-logo-area">
+                    ${logoHTML}
+                </div>
+                <div class="invoice-meta">
+                    <h2>${ar ? 'فاتورة طلب' : 'Order Invoice'}</h2>
+                    <p><strong>${ar ? 'رقم الطلب:' : 'Order ID:'}</strong> #${o.id}</p>
+                    <p><strong>${ar ? 'تاريخ الطلب:' : 'Order Date:'}</strong> ${orderDate}</p>
+                </div>
+            </div>
+
+            <div class="invoice-details-grid">
+                <div class="invoice-block">
+                    <h4>${ar ? 'بيانات المتجر' : 'Store Details'}</h4>
+                    <p><strong>${settings.storeName || 'Game Zone Store'}</strong></p>
+                    <p>${ar ? 'بريد إلكتروني: support@gamezone.com' : 'Email: support@gamezone.com'}</p>
+                    <p>${ar ? 'الموقع الإلكتروني: game-zone-store.onrender.com' : 'Website: game-zone-store.onrender.com'}</p>
+                </div>
+                <div class="invoice-block">
+                    <h4>${ar ? 'بيانات العميل والتوصيل' : 'Customer & Shipping'}</h4>
+                    <p><strong>${o.customerName}</strong></p>
+                    <p><strong>${ar ? 'الهاتف:' : 'Phone:'}</strong> ${o.customerPhone}</p>
+                    <p><strong>${ar ? 'العنوان:' : 'Address:'}</strong> ${o.customerCity} - ${o.customerAddress}</p>
+                    <p><strong>${ar ? 'طريقة الدفع:' : 'Payment Method:'}</strong> ${pMethodLocal}</p>
+                </div>
+            </div>
+
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th style="text-align: inherit;">${ar ? 'المنتج' : 'Product'}</th>
+                        <th style="text-align: inherit;">${ar ? 'سعر الوحدة' : 'Unit Price'}</th>
+                        <th style="text-align: center;">${ar ? 'الكمية' : 'Quantity'}</th>
+                        <th style="text-align: inherit;">${ar ? 'الإجمالي' : 'Total'}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${itemsRows}
+                </tbody>
+            </table>
+
+            <div class="invoice-summary">
+                <div class="invoice-summary-row">
+                    <span>${ar ? 'المجموع الفرعي:' : 'Subtotal:'}</span>
+                    <span>${o.totalPrice.toLocaleString()} ${currencySymbol}</span>
+                </div>
+                <div class="invoice-summary-row total">
+                    <span>${ar ? 'الإجمالي النهائي:' : 'Final Total:'}</span>
+                    <span>${o.totalPrice.toLocaleString()} ${currencySymbol}</span>
+                </div>
+            </div>
+
+            <div class="invoice-footer-note">
+                <p>${ar ? `شكراً لتسوقكم من ${settings.storeName || 'Game Zone Store'}!` : `Thank you for shopping with ${settings.storeName || 'Game Zone Store'}!`}</p>
+                <p style="font-size: 0.7rem; color: #aaa; margin-top: 5px;">${ar ? 'تم إنشاؤها تلقائياً عبر نظام الفواتير' : 'Automatically generated via the billing system'}</p>
+            </div>
+        </div>
+    `;
+
+    printContainer.innerHTML = invoiceHTML;
+
+    // Trigger printing
+    window.print();
 }
