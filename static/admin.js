@@ -10,7 +10,15 @@ let settings = {
     bankHolder: "مؤسسة منطقة الألعاب التجارية",
     bankIban: "SA9380000123456789012345",
     logo: "",
-    adminPassword: "admin"
+    adminPassword: "admin",
+    usdToSarRate: 3.75,
+    usdToYerRate: 1600.0,
+    enableBcash: true,
+    enableQurooshi: true,
+    enableKuraimi: true,
+    bcashNumber: "770000000",
+    qurooshiNumber: "771000000",
+    kuraimiNumber: "3000000"
 };
 let uploadedProductImageBase64 = null;
 let currentTab = 'overview';
@@ -180,10 +188,23 @@ function populateSettingsForm() {
     document.getElementById('settings-bank-name').value = settings.bankName || '';
     document.getElementById('settings-bank-holder').value = settings.bankHolder || '';
     document.getElementById('settings-bank-iban').value = settings.bankIban || '';
+    
+    // Yemeni payments and rates
+    document.getElementById('settings-enable-bcash').checked = settings.enableBcash ?? true;
+    document.getElementById('settings-enable-qurooshi').checked = settings.enableQurooshi ?? true;
+    document.getElementById('settings-enable-kuraimi').checked = settings.enableKuraimi ?? true;
+    document.getElementById('settings-bcash-number').value = settings.bcashNumber || '';
+    document.getElementById('settings-qurooshi-number').value = settings.qurooshiNumber || '';
+    document.getElementById('settings-kuraimi-number').value = settings.kuraimiNumber || '';
+    document.getElementById('settings-sar-rate').value = settings.usdToSarRate || 3.75;
+    document.getElementById('settings-yer-rate').value = settings.usdToYerRate || 1600.0;
     document.getElementById('settings-admin-password').value = settings.adminPassword || 'admin';
 
     // Show/hide bank inputs
     toggleSettingsBankSection(settings.enableBank ?? true);
+    toggleSettingsBcashSection(settings.enableBcash ?? true);
+    toggleSettingsQurooshiSection(settings.enableQurooshi ?? true);
+    toggleSettingsKuraimiSection(settings.enableKuraimi ?? true);
 
     // Render Logo preview
     const previewBox = document.getElementById('settings-logo-preview-box');
@@ -197,17 +218,54 @@ function populateSettingsForm() {
 // Show/Hide Bank Account fields based on toggle
 function toggleSettingsBankSection(isChecked) {
     const card = document.getElementById('settings-bank-info-card');
-    if (isChecked) {
-        card.style.display = 'block';
-        document.getElementById('settings-bank-name').required = true;
-        document.getElementById('settings-bank-holder').required = true;
-        document.getElementById('settings-bank-iban').required = true;
-    } else {
-        card.style.display = 'none';
-        document.getElementById('settings-bank-name').required = false;
-        document.getElementById('settings-bank-holder').required = false;
-        document.getElementById('settings-bank-iban').required = false;
+    if (card) {
+        if (isChecked) {
+            card.style.display = 'block';
+            document.getElementById('settings-bank-name').required = true;
+            document.getElementById('settings-bank-holder').required = true;
+            document.getElementById('settings-bank-iban').required = true;
+        } else {
+            card.style.display = 'none';
+            document.getElementById('settings-bank-name').required = false;
+            document.getElementById('settings-bank-holder').required = false;
+            document.getElementById('settings-bank-iban').required = false;
+        }
     }
+}
+
+function toggleSettingsBcashSection(isChecked) {
+    const el = document.getElementById('settings-bcash-group');
+    if (el) el.style.display = isChecked ? 'block' : 'none';
+    const input = document.getElementById('settings-bcash-number');
+    if (input) input.required = isChecked;
+    updateYemeniDetailsCardVisibility();
+}
+
+function toggleSettingsQurooshiSection(isChecked) {
+    const el = document.getElementById('settings-qurooshi-group');
+    if (el) el.style.display = isChecked ? 'block' : 'none';
+    const input = document.getElementById('settings-qurooshi-number');
+    if (input) input.required = isChecked;
+    updateYemeniDetailsCardVisibility();
+}
+
+function toggleSettingsKuraimiSection(isChecked) {
+    const el = document.getElementById('settings-kuraimi-group');
+    if (el) el.style.display = isChecked ? 'block' : 'none';
+    const input = document.getElementById('settings-kuraimi-number');
+    if (input) input.required = isChecked;
+    updateYemeniDetailsCardVisibility();
+}
+
+function updateYemeniDetailsCardVisibility() {
+    const card = document.getElementById('settings-yemeni-info-card');
+    if (!card) return;
+    const bcashChecked = document.getElementById('settings-enable-bcash') ? document.getElementById('settings-enable-bcash').checked : true;
+    const qurooshiChecked = document.getElementById('settings-enable-qurooshi') ? document.getElementById('settings-enable-qurooshi').checked : true;
+    const kuraimiChecked = document.getElementById('settings-enable-kuraimi') ? document.getElementById('settings-enable-kuraimi').checked : true;
+    
+    const anyEnabled = (bcashChecked || qurooshiChecked || kuraimiChecked);
+    card.style.display = anyEnabled ? 'block' : 'none';
 }
 
 // Settings Logo Select Trigger
@@ -274,7 +332,16 @@ async function saveStoreSettings(event) {
         bankHolder: document.getElementById('settings-bank-holder').value,
         bankIban: document.getElementById('settings-bank-iban').value,
         logo: settings.logo || "",
-        adminPassword: document.getElementById('settings-admin-password').value
+        adminPassword: document.getElementById('settings-admin-password').value,
+        
+        usdToSarRate: parseFloat(document.getElementById('settings-sar-rate').value) || 3.75,
+        usdToYerRate: parseFloat(document.getElementById('settings-yer-rate').value) || 1600.0,
+        enableBcash: document.getElementById('settings-enable-bcash').checked,
+        enableQurooshi: document.getElementById('settings-enable-qurooshi').checked,
+        enableKuraimi: document.getElementById('settings-enable-kuraimi').checked,
+        bcashNumber: document.getElementById('settings-bcash-number').value,
+        qurooshiNumber: document.getElementById('settings-qurooshi-number').value,
+        kuraimiNumber: document.getElementById('settings-kuraimi-number').value
     };
 
     try {
@@ -364,7 +431,9 @@ function renderRecentOrders() {
         const statusBadge = o.status === 'completed' 
             ? `<span class="badge badge-completed">مكتمل</span>` 
             : `<span class="badge badge-pending">قيد الانتظار</span>`;
-        const currencySymbol = o.currency === 'SAR' ? 'ر.س' : '$';
+        let currencySymbol = '$';
+        if (o.currency === 'SAR') currencySymbol = 'ر.س';
+        else if (o.currency === 'YER') currencySymbol = 'ر.ي';
 
         return `
             <tr>
@@ -430,7 +499,9 @@ function renderOrdersTable() {
         const statusBadge = o.status === 'completed' 
             ? `<span class="badge badge-completed">مكتمل</span>` 
             : `<span class="badge badge-pending">قيد الانتظار</span>`;
-        const currencySymbol = o.currency === 'SAR' ? 'ر.س' : '$';
+        let currencySymbol = '$';
+        if (o.currency === 'SAR') currencySymbol = 'ر.س';
+        else if (o.currency === 'YER') currencySymbol = 'ر.ي';
 
         const actionButtons = o.status === 'pending'
             ? `<button class="btn-table-action" style="color:#10b981;border-color:rgba(16,185,129,0.2);" onclick="completeOrder(${o.id})" title="تحديد كمكتمل">
@@ -468,6 +539,9 @@ function getPaymentMethodName(method) {
     if (method === 'cod') return '<i class="fa-solid fa-hand-holding-dollar" style="margin-left:5px;color:var(--primary-color);"></i>الدفع عند الاستلام';
     if (method === 'bank') return '<i class="fa-solid fa-building-columns" style="margin-left:5px;color:var(--primary-color);"></i>تحويل بنكي';
     if (method === 'card') return '<i class="fa-solid fa-credit-card" style="margin-left:5px;color:var(--primary-color);"></i>بطاقة مدى / ائتمان';
+    if (method === 'bcash') return '<i class="fa-solid fa-mobile-screen-button" style="margin-left:5px;color:var(--primary-color);"></i>B-Cash (البسيري)';
+    if (method === 'qurooshi') return '<i class="fa-solid fa-wallet" style="margin-left:5px;color:var(--primary-color);"></i>محفظة قروشي (أمجاد)';
+    if (method === 'kuraimi') return '<i class="fa-solid fa-building-columns" style="margin-left:5px;color:var(--primary-color);"></i>بنك الكريمي';
     return method;
 }
 
@@ -476,18 +550,33 @@ function updateKPIs() {
     const activeProducts = products.length;
     const totalOrders = orders.length;
 
+    const sarRate = settings.usdToSarRate || 3.75;
+    const yerRate = settings.usdToYerRate || 1600.0;
+
     // Convert everything to USD base first, to prevent mixing currencies mathematically
     const totalRevenueUSD = orders.reduce((sum, o) => {
-        const amountUSD = o.currency === 'SAR' ? (o.totalPrice / 3.75) : o.totalPrice;
+        let amountUSD = o.totalPrice;
+        if (o.currency === 'SAR') amountUSD = o.totalPrice / sarRate;
+        else if (o.currency === 'YER') amountUSD = o.totalPrice / yerRate;
         return sum + amountUSD;
     }, 0);
     const avgOrderValUSD = totalOrders > 0 ? (totalRevenueUSD / totalOrders) : 0;
 
-    // Format display depending on store settings currency (USD or SAR)
+    // Format display depending on store settings currency (USD, SAR or YER)
     const baseCurrency = settings.currency || 'USD';
-    const displayRevenue = baseCurrency === 'SAR' ? Math.round(totalRevenueUSD * 3.75) : Math.round(totalRevenueUSD);
-    const displayAvg = baseCurrency === 'SAR' ? Math.round(avgOrderValUSD * 3.75) : Math.round(avgOrderValUSD);
-    const currencySymbol = baseCurrency === 'SAR' ? 'ر.س' : '$';
+    let displayRevenue = Math.round(totalRevenueUSD);
+    let displayAvg = Math.round(avgOrderValUSD);
+    let currencySymbol = '$';
+
+    if (baseCurrency === 'SAR') {
+        displayRevenue = Math.round(totalRevenueUSD * sarRate);
+        displayAvg = Math.round(avgOrderValUSD * sarRate);
+        currencySymbol = 'ر.س';
+    } else if (baseCurrency === 'YER') {
+        displayRevenue = Math.round(totalRevenueUSD * yerRate);
+        displayAvg = Math.round(avgOrderValUSD * yerRate);
+        currencySymbol = 'ر.ي';
+    }
 
     document.getElementById('kpi-revenue').innerText = `${displayRevenue.toLocaleString()} ${currencySymbol}`;
     document.getElementById('kpi-orders').innerText = totalOrders;
@@ -776,7 +865,10 @@ function viewOrderDetails(orderId) {
     const statusText = o.status === 'completed' ? '<span class="badge badge-completed">مكتمل</span>' : '<span class="badge badge-pending">قيد الانتظار</span>';
 
     // Build items rows
-    const currencySymbol = o.currency === 'SAR' ? 'ر.س' : '$';
+    let currencySymbol = '$';
+    if (o.currency === 'SAR') currencySymbol = 'ر.س';
+    else if (o.currency === 'YER') currencySymbol = 'ر.ي';
+    
     const itemsRows = o.items.map(item => `
         <tr>
             <td style="text-align:right;">${item.title}</td>
@@ -788,16 +880,16 @@ function viewOrderDetails(orderId) {
 
     // Extra payment details view
     let paymentDetailsView = '';
-    if (o.paymentMethod === 'bank') {
+    if (['bank', 'bcash', 'qurooshi', 'kuraimi'].includes(o.paymentMethod)) {
         const hasReceipt = o.paymentDetails && o.paymentDetails.hasReceipt;
         const receiptImg = o.paymentDetails && o.paymentDetails.receiptImage;
         
         paymentDetailsView = `
             <div style="grid-column: 1/-1; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-                <div class="order-detail-label">صورة إيصال التحويل البنكي:</div>
+                <div class="order-detail-label">صورة إشعار/إيصال التحويل:</div>
                 ${hasReceipt && receiptImg 
                     ? `<div style="margin-top:8px;"><img src="${receiptImg}" alt="Receipt" style="max-width:100%; max-height:220px; border-radius:8px; border:1px solid var(--border-color); cursor:pointer;" onclick="window.open(this.src)"></div>` 
-                    : '<div style="color:var(--text-muted); font-size:0.85rem; font-style:italic; margin-top:5px;">لم يقم العميل بإرفاق صورة الإيصال.</div>'}
+                    : '<div style="color:var(--text-muted); font-size:0.85rem; font-style:italic; margin-top:5px;">لم يقم العميل بإرفاق صورة إشعار التحويل.</div>'}
             </div>
         `;
     } else if (o.paymentMethod === 'card') {

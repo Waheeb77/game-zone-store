@@ -290,6 +290,39 @@
                                 <span class="slider"></span>
                             </label>
                         </div>
+
+                        <div class="switch-group">
+                            <div class="switch-label">
+                                <span class="switch-title">حساب B-Cash (بنك البسيري)</span>
+                                <span class="switch-desc">تمكين خيار الدفع الإلكتروني عبر B-Cash بنك البسيري بالريال اليمني.</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settings-enable-bcash" checked onchange="toggleSettingsBcashSection(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="switch-group">
+                            <div class="switch-label">
+                                <span class="switch-title">محفظة قروشي (بنك أمجاد)</span>
+                                <span class="switch-desc">تمكين خيار الدفع عبر محفظة قروشي بنك أمجاد بالريال اليمني.</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settings-enable-qurooshi" checked onchange="toggleSettingsQurooshiSection(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="switch-group">
+                            <div class="switch-label">
+                                <span class="switch-title">بنك الكريمي الإسلامي</span>
+                                <span class="switch-desc">تمكين خيار الدفع عبر حساب بنك الكريمي بالريال اليمني.</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="settings-enable-kuraimi" checked onchange="toggleSettingsKuraimiSection(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
 
                     <!-- Bank details info form -->
@@ -308,6 +341,40 @@
                         <div class="form-group">
                             <label for="settings-bank-iban">رقم الآيبان الدولي (IBAN) *</label>
                             <input type="text" id="settings-bank-iban" placeholder="SA9380000xxxxxxxxxxxxxxx" style="direction: ltr; font-family: monospace;">
+                        </div>
+                    </div>
+
+                    <!-- Yemeni payment details info form -->
+                    <div class="settings-section-card" id="settings-yemeni-info-card">
+                        <h4 class="settings-section-title"><i class="fa-solid fa-mobile-screen-button"></i> تفاصيل الحسابات والمحافظ اليمنية</h4>
+                        <div class="form-row">
+                            <div class="form-group" id="settings-bcash-group">
+                                <label for="settings-bcash-number">رقم حساب B-Cash (بنك البسيري) *</label>
+                                <input type="text" id="settings-bcash-number" placeholder="مثال: 770123456">
+                            </div>
+                            <div class="form-group" id="settings-qurooshi-group">
+                                <label for="settings-qurooshi-number">رقم محفظة قروشي (بنك أمجاد) *</label>
+                                <input type="text" id="settings-qurooshi-number" placeholder="مثال: 771234567">
+                            </div>
+                        </div>
+                        <div class="form-group" id="settings-kuraimi-group">
+                            <label for="settings-kuraimi-number">رقم حساب الكريمي *</label>
+                            <input type="text" id="settings-kuraimi-number" placeholder="مثال: 3012345">
+                        </div>
+                    </div>
+
+                    <!-- Currency Rates Settings -->
+                    <div class="settings-section-card">
+                        <h4 class="settings-section-title"><i class="fa-solid fa-calculator"></i> أسعار تحويل العملات مقابل الدولار ($)</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="settings-sar-rate">سعر صرف الريال السعودي (SAR) مقابل 1 دولار *</label>
+                                <input type="number" id="settings-sar-rate" step="0.01" required placeholder="3.75">
+                            </div>
+                            <div class="form-group">
+                                <label for="settings-yer-rate">سعر صرف الريال اليمني (YER) مقابل 1 دولار *</label>
+                                <input type="number" id="settings-yer-rate" step="1" required placeholder="1600">
+                            </div>
                         </div>
                     </div>
 

@@ -29,6 +29,7 @@
                 <div class="currency-switcher" id="store-currency-switcher">
                     <button type="button" class="currency-btn active" id="cur-btn-usd" onclick="changeStoreCurrency('USD')">USD ($)</button>
                     <button type="button" class="currency-btn" id="cur-btn-sar" onclick="changeStoreCurrency('SAR')">SAR (ر.س)</button>
+                    <button type="button" class="currency-btn" id="cur-btn-yer" onclick="changeStoreCurrency('YER')">YER (ر.ي)</button>
                 </div>
                 
                 <div class="cart-icon-wrapper" id="cart-trigger" onclick="toggleCart(true)">
@@ -147,7 +148,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="checkout-phone">رقم الجوال *</label>
-                            <input type="tel" id="checkout-phone" required placeholder="05xxxxxxxx" pattern="^05[0-9]{8}$" title="رقم جوال سعودي يبدأ بـ 05 ويتكون من 10 أرقام">
+                            <input type="tel" id="checkout-phone" required placeholder="مثال: +9665xxxxxxxx أو +967xxxxxxx" title="يرجى إدخال رقم هاتف صالح مع رمز الدولة">
                         </div>
                         <div class="form-group">
                             <label for="checkout-city">المدينة *</label>
@@ -176,6 +177,18 @@
                         <button type="button" class="payment-tab-btn" id="tab-btn-card" onclick="switchPaymentTab('card')">
                             <i class="fa-solid fa-credit-card"></i>
                             <span>بطاقة مدى / ائتمان</span>
+                        </button>
+                        <button type="button" class="payment-tab-btn" id="tab-btn-bcash" onclick="switchPaymentTab('bcash')">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>B-Cash (البسيري)</span>
+                        </button>
+                        <button type="button" class="payment-tab-btn" id="tab-btn-qurooshi" onclick="switchPaymentTab('qurooshi')">
+                            <i class="fa-solid fa-wallet"></i>
+                            <span>محفظة قروشي (أمجاد)</span>
+                        </button>
+                        <button type="button" class="payment-tab-btn" id="tab-btn-kuraimi" onclick="switchPaymentTab('kuraimi')">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>بنك الكريمي</span>
                         </button>
                     </div>
 
@@ -277,6 +290,54 @@
                             <div class="form-group">
                                 <label for="card-cvv">الرمز السري (CVV) *</label>
                                 <input type="password" id="card-cvv" placeholder="•••" maxlength="3" oninput="updateCardDetails()" onfocus="setCardFlip(true)" onblur="setCardFlip(false)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. B-Cash Panel -->
+                    <div class="payment-panel" id="panel-bcash">
+                        <div class="bank-info-card">
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">يرجى تحويل المبلغ المطلوب عبر خدمة B-Cash (بنك البسيري) إلى الرقم التالي:</p>
+                            <div class="bank-detail-row">
+                                <span class="bank-label">رقم حساب B-Cash</span>
+                                <span class="bank-value" id="bcash-number-display" style="font-family: monospace; font-size: 1.05rem; letter-spacing: 1px; color: var(--primary-color);">770000000</span>
+                            </div>
+                            <!-- Receipt upload simulator -->
+                            <div class="receipt-upload-box" onclick="simulateReceiptUpload()">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span>اضغط هنا لرفع صورة إشعار تحويل B-Cash (اختياري)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Qurooshi Panel -->
+                    <div class="payment-panel" id="panel-qurooshi">
+                        <div class="bank-info-card">
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">يرجى تحويل المبلغ المطلوب عبر محفظة قروشي (بنك أمجاد) إلى الرقم التالي:</p>
+                            <div class="bank-detail-row">
+                                <span class="bank-label">رقم محفظة قروشي</span>
+                                <span class="bank-value" id="qurooshi-number-display" style="font-family: monospace; font-size: 1.05rem; letter-spacing: 1px; color: var(--primary-color);">771000000</span>
+                            </div>
+                            <!-- Receipt upload simulator -->
+                            <div class="receipt-upload-box" onclick="simulateReceiptUpload()">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span>اضغط هنا لرفع صورة إشعار تحويل قروشي (اختياري)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Kuraimi Panel -->
+                    <div class="payment-panel" id="panel-kuraimi">
+                        <div class="bank-info-card">
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">يرجى تحويل المبلغ المطلوب إلى حساب بنك الكريمي التالي:</p>
+                            <div class="bank-detail-row">
+                                <span class="bank-label">رقم حساب الكريمي</span>
+                                <span class="bank-value" id="kuraimi-number-display" style="font-family: monospace; font-size: 1.05rem; letter-spacing: 1px; color: var(--primary-color);">3000000</span>
+                            </div>
+                            <!-- Receipt upload simulator -->
+                            <div class="receipt-upload-box" onclick="simulateReceiptUpload()">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span>اضغط هنا لرفع صورة إشعار تحويل الكريمي (اختياري)</span>
                             </div>
                         </div>
                     </div>
