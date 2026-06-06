@@ -97,5 +97,38 @@
     "description": "<b>جهاز كمبيوتر متكامل جاهز للتشغيل بأعلى أداء</b><br>كرت شاشة RTX 4080 Super 16GB مع معالج Core i9-14900K، ذاكرة 32GB DDR5، قرص تخزين 2TB NVMe SSD، تبريد مائي مدمج، كيس ألعاب RGB احترافي.",
     "description_en": "<b>Complete plug-and-play gaming PC built for ultimate performance.</b><br>RTX 4080 Super 16GB, Core i9-14900K, 32GB DDR5 RAM, 2TB NVMe SSD, liquid cooler, premium RGB gaming chassis.",
     "image": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 10,
+    "title": "شاشة ألعاب منحنية ASUS ROG Swift OLED PG27AQDM",
+    "title_en": "ASUS ROG Swift OLED PG27AQDM Curved Gaming Monitor",
+    "category": "شاشات",
+    "price": 899,
+    "stock": 3,
+    "description": "<b>شاشة قيمنق أوليد خارقة الجودة 27 بوصة</b><br>تردد 240Hz ووقت استجابة 0.03ms. دقة QHD (2560x1440). ألوان مشبعة للغاية وحماية متكاملة لمنع التطبيع مع تبريد ذكي.",
+    "description_en": "<b>Ultimate 27-inch OLED gaming monitor.</b><br>240Hz refresh rate and 0.03ms response time. QHD (2560x1440) resolution. Highly saturated colors, built-in burn-in protection, and smart cooling.",
+    "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 11,
+    "title": "كرت شاشة مدمج Corsair T3 Rush كرسي ألعاب احترافي",
+    "title_en": "Corsair T3 Rush Professional Gaming Chair",
+    "category": "طاولات وكراسي",
+    "price": 320,
+    "stock": 4,
+    "description": "<b>كرسي قيمنق مريح للغاية بتصميم مستوحى من سباقات السيارات</b><br>مكسو بقماش ناعم يتنفس لمنع الحرارة. مسند ظهر قابل للإمالة حتى 180 درجة ومساند ذراع رباعية الأبعاد (4D) مريحة جداً للجلسات الطويلة.",
+    "description_en": "<b>Highly comfortable racing-inspired gaming chair.</b><br>Upholstered with soft breathable fabric. 180-degree reclining backrest and 4D armrests, perfect for long gaming sessions.",
+    "image": "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 12,
+    "title": "طاولة ألعاب كهربائية متحركة Cougar E-DEIMUS 120",
+    "title_en": "Cougar E-DEIMUS 120 Electric Adjustable Gaming Desk",
+    "category": "طاولات وكراسي",
+    "price": 450,
+    "stock": 2,
+    "description": "<b>طاولة قيمنق كهربائية ذكية مع تحكم بالارتفاع</b><br>تحكم كهربائي سلس لحفظ الارتفاع المناسب لك. سطح مغطى بألياف الكربون المقاومة للخدش، مع حامل للأكواب وحامل لسماعة الرأس وإضاءة RGB مدمجة.",
+    "description_en": "<b>Smart electric adjustable height gaming desk.</b><br>Smooth electric control to save height presets. Scratch-resistant carbon fiber texture desktop, with cup holder, headset hook, and built-in RGB.",
+    "image": "https://images.unsplash.com/photo-1618477388954-7852f32655ec?w=600&auto=format&fit=crop&q=80"
   }
 ]

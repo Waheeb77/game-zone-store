@@ -159,7 +159,9 @@ const i18n = {
     cat_new: "قطع جديدة",
     cat_used: "قطع مستعملة",
     cat_acc: "إكسسوارات",
-    cat_builds: "تجميعات كاملة"
+    cat_builds: "تجميعات كاملة",
+    cat_monitors: "شاشات",
+    cat_furniture: "طاولات وكراسي"
   },
   en: {
     hero_subtitle: "The Ultimate Professional Gaming Store",
@@ -233,7 +235,9 @@ const i18n = {
     cat_new: "New Parts",
     cat_used: "Used Parts",
     cat_acc: "Accessories",
-    cat_builds: "Complete Builds"
+    cat_builds: "Complete Builds",
+    cat_monitors: "Monitors",
+    cat_furniture: "Gaming Furniture"
   }
 };
 
@@ -302,7 +306,9 @@ function renderCategories() {
         { id: 'جديد', labelKey: 'cat_new', icon: 'fa-sparkles' },
         { id: 'مستعمل', labelKey: 'cat_used', icon: 'fa-recycle' },
         { id: 'إكسسوارات', labelKey: 'cat_acc', icon: 'fa-keyboard' },
-        { id: 'تجميعات', labelKey: 'cat_builds', icon: 'fa-laptop-code' }
+        { id: 'تجميعات', labelKey: 'cat_builds', icon: 'fa-laptop-code' },
+        { id: 'شاشات', labelKey: 'cat_monitors', icon: 'fa-desktop' },
+        { id: 'طاولات وكراسي', labelKey: 'cat_furniture', icon: 'fa-couch' }
     ];
 
     list.innerHTML = cats.map(cat => {
@@ -588,7 +594,9 @@ function renderProducts() {
             if (product.category === 'جديد') catBadge = 'New';
             else if (product.category === 'مستعمل') catBadge = 'Used';
             else if (product.category === 'إكسسوارات') catBadge = 'Accessories';
-            else if (product.category === 'تجميعات') catBadge = 'Build';
+            else if (product.category === 'تجميعات') catBadge = 'Builds';
+            else if (product.category === 'شاشات') catBadge = 'Monitors';
+            else if (product.category === 'طاولات وكراسي') catBadge = 'Gaming Furniture';
         }
 
         // Stock labels and visual status

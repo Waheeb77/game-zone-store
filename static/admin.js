@@ -171,6 +171,28 @@ async function apiGet(endpoint, fallbackKey, defaultVal) {
         const response = await fetch(endpoint);
         if (response.ok) {
             const data = await response.json();
+            
+            // Self-healing database sync logic for orders:
+            if (fallbackKey === 'local_orders' && Array.isArray(data)) {
+                let localData = [];
+                try {
+                    localData = JSON.parse(localStorage.getItem('local_orders')) || [];
+                } catch (e) {}
+                if (Array.isArray(localData) && localData.length > data.length) {
+                    console.log("Server orders database reset detected. Restoring from client LocalStorage...");
+                    // Merge localData and data to prevent any data loss:
+                    const merged = [...data];
+                    localData.forEach(localOrd => {
+                        if (!merged.some(o => o.id === localOrd.id)) {
+                            merged.push(localOrd);
+                        }
+                    });
+                    // Post back to heal the server database
+                    await apiPost(endpoint, fallbackKey, merged);
+                    return merged;
+                }
+            }
+            
             localStorage.setItem(fallbackKey, JSON.stringify(data));
             return data;
         }
@@ -1185,6 +1207,12 @@ function printOrderInvoice(orderId) {
         logoHTML = `<div class="invoice-logo-txt">${settings.storeName || 'Game Zone'}</div>`;
     }
 
+    // Get elegant uppercase English store name for the center title
+    let storeNameEn = 'GAME ZONE STORE';
+    if (settings.storeName && !/[\u0600-\u06FF]/.test(settings.storeName)) {
+        storeNameEn = settings.storeName.toUpperCase();
+    }
+
     // Items table rows
     const itemsRows = o.items.map(item => `
         <tr>
@@ -1202,6 +1230,10 @@ function printOrderInvoice(orderId) {
             <div class="invoice-header">
                 <div class="invoice-logo-area">
                     ${logoHTML}
+                </div>
+                <div class="invoice-center-title">
+                    <div class="invoice-title-en">${storeNameEn}</div>
+                    <div class="invoice-subtitle-en">E-Commerce Packing Slip & Invoice</div>
                 </div>
                 <div class="invoice-meta">
                     <h2>${ar ? 'فاتورة طلب' : 'Order Invoice'}</h2>
@@ -1248,6 +1280,17 @@ function printOrderInvoice(orderId) {
                 <div class="invoice-summary-row total">
                     <span>${ar ? 'الإجمالي النهائي:' : 'Final Total:'}</span>
                     <span>${o.totalPrice.toLocaleString()} ${currencySymbol}</span>
+                </div>
+            </div>
+
+            <div class="invoice-signature-area">
+                <div class="signature-box">
+                    <p class="signature-title">${ar ? 'توقيع المستلم:' : 'Receiver Signature:'}</p>
+                    <div class="signature-line"></div>
+                </div>
+                <div class="signature-box">
+                    <p class="signature-title">${ar ? 'توقيع وختم المتجر:' : 'Store Signature & Stamp:'}</p>
+                    <div class="signature-line"></div>
                 </div>
             </div>
 
