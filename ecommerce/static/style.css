@@ -1928,16 +1928,55 @@ tr:hover td {
     }
     
     /* Modal responsive adjustments */
+    .modal-overlay {
+        padding: 8px !important;
+    }
+
     .modal-content {
-        padding: 1.5rem !important;
+        padding: 1.2rem !important;
         border-radius: 16px !important;
-        margin: 10px !important;
-        width: calc(100% - 20px) !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 95vh !important;
     }
 
     .form-row {
         grid-template-columns: 1fr !important;
         gap: 0 !important;
+    }
+    
+    /* Wrap payment tabs into grid on mobile to prevent overflow */
+    .payment-tabs {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        border: none !important;
+        gap: 8px !important;
+        background: transparent !important;
+        margin-bottom: 1.2rem !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
+    }
+    
+    .payment-tab-btn {
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 10px !important;
+        padding: 0.6rem 0.4rem !important;
+        font-size: 0.72rem !important;
+    }
+    
+    .payment-tab-btn:not(:last-child) {
+        border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .form-group label {
+        margin-bottom: 0.3rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .form-group input, .form-group select, .form-group textarea {
+        padding: 0.7rem 0.9rem !important;
+        font-size: 0.85rem !important;
     }
     
     /* Admin responsive layout */
