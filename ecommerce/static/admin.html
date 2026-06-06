@@ -11,25 +11,25 @@
 </head>
 <body style="background-color: #06070a;">
     <!-- Sleek Cyberpunk Admin Login Overlay -->
-    <div id="admin-login-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #05060b; z-index: 99999; display: flex; justify-content: center; align-items: center; padding: 20px; direction: rtl;">
+    <div id="admin-login-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #05060b; z-index: 99999; display: flex; justify-content: center; align-items: center; padding: 20px;">
         <div style="background: rgba(13, 15, 28, 0.95); border: 1px solid rgba(0, 245, 212, 0.2); border-radius: 20px; width: 100%; max-width: 420px; padding: 2.5rem; box-shadow: 0 0 30px rgba(0, 245, 212, 0.15); text-align: center;">
             <div style="margin-bottom: 2rem;">
                 <div style="font-size: 3rem; color: #00f5d4; text-shadow: 0 0 15px rgba(0, 245, 212, 0.4); margin-bottom: 10px;"><i class="fa-solid fa-shield-halved"></i></div>
-                <h2 style="font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 1.6rem; color: #fff; margin-bottom: 5px;">حماية الإدارة</h2>
-                <p style="font-family: 'Cairo', sans-serif; font-size: 0.85rem; color: #9ca3af;">الرجاء إدخال كلمة مرور المدير للوصول للوحة التحكم</p>
+                <h2 style="font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 1.6rem; color: #fff; margin-bottom: 5px;" data-i18n="admin_protection">حماية الإدارة</h2>
+                <p style="font-family: 'Cairo', sans-serif; font-size: 0.85rem; color: #9ca3af;" data-i18n="admin_enter_password">الرجاء إدخال كلمة مرور المدير للوصول للوحة التحكم</p>
             </div>
             <form id="admin-login-form">
-                <div style="margin-bottom: 1.5rem; text-align: right;">
-                    <label for="admin-pass-field" style="font-family: 'Cairo', sans-serif; font-size: 0.85rem; color: #9ca3af; display: block; margin-bottom: 8px;">كلمة المرور *</label>
+                <div style="margin-bottom: 1.5rem; text-align: inherit;">
+                    <label for="admin-pass-field" style="font-family: 'Cairo', sans-serif; font-size: 0.85rem; color: #9ca3af; display: block; margin-bottom: 8px;" data-i18n="admin_password_label">كلمة المرور *</label>
                     <input type="password" id="admin-pass-field" required placeholder="••••••••" style="width: 100%; padding: 0.8rem 1.2rem; background: rgba(5, 6, 11, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; color: #fff; font-size: 1rem; outline: none; transition: all 0.3s; text-align: center; letter-spacing: 3px;" onfocus="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 0 10px rgba(0, 245, 212, 0.2)'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.08)'; this.style.boxShadow='none'">
                     <span id="login-error-msg" style="color: #ef4444; font-size: 0.8rem; display: block; margin-top: 8px; font-weight: 600; text-align: center; display: none;">❌ كلمة المرور غير صحيحة!</span>
                 </div>
                 <button type="submit" style="width: 100%; padding: 0.9rem; background: #00f5d4; color: #000; border: none; border-radius: 10px; font-family: 'Cairo', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px;" onmouseover="this.style.background='#00d8bc'; this.style.boxShadow='0 0 15px rgba(0, 245, 212, 0.4)'" onmouseout="this.style.background='#00f5d4'; this.style.boxShadow='none'">
-                    <i class="fa-solid fa-key"></i> دخول لوحة التحكم
+                    <i class="fa-solid fa-key"></i> <span data-i18n="admin_login_btn">دخول لوحة التحكم</span>
                 </button>
             </form>
             <div style="margin-top: 1.5rem;">
-                <a href="index.html" style="font-family: 'Cairo', sans-serif; font-size: 0.85rem; color: #9ca3af; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.color='#a855f7'" onmouseout="this.style.color='#9ca3af'"><i class="fa-solid fa-arrow-left" style="transform: scaleX(-1);"></i> العودة لمتجر الزبائن</a>
+                <a href="index.html" style="font-family: 'Cairo', sans-serif; font-size: 0.85rem; color: #9ca3af; text-decoration: none; transition: all 0.3s;" onmouseover="this.style.color='#a855f7'" onmouseout="this.style.color='#9ca3af'" data-i18n="admin_return_store"><i class="fa-solid fa-arrow-left"></i> العودة لمتجر الزبائن</a>
             </div>
         </div>
     </div>
@@ -46,22 +46,22 @@
                     <ul class="admin-menu">
                         <li>
                             <a href="#" class="admin-menu-link active" onclick="switchAdminTab('overview', this)">
-                                <i class="fa-solid fa-chart-pie"></i> الإحصائيات العامة
+                                <i class="fa-solid fa-chart-pie"></i> <span data-i18n="admin_menu_overview">الإحصائيات العامة</span>
                             </a>
                         </li>
                         <li>
                             <a href="#" class="admin-menu-link" onclick="switchAdminTab('products', this)">
-                                <i class="fa-solid fa-box"></i> إدارة المنتجات
+                                <i class="fa-solid fa-box"></i> <span data-i18n="admin_menu_products">إدارة المنتجات</span>
                             </a>
                         </li>
                         <li>
                             <a href="#" class="admin-menu-link" onclick="switchAdminTab('orders', this)">
-                                <i class="fa-solid fa-receipt"></i> قائمة الطلبات
+                                <i class="fa-solid fa-receipt"></i> <span data-i18n="admin_menu_orders">قائمة الطلبات</span>
                             </a>
                         </li>
                         <li>
                             <a href="#" class="admin-menu-link" onclick="switchAdminTab('settings', this)">
-                                <i class="fa-solid fa-gears"></i> إعدادات المتجر
+                                <i class="fa-solid fa-gears"></i> <span data-i18n="admin_menu_settings">إعدادات المتجر</span>
                             </a>
                         </li>
                     </ul>
@@ -70,22 +70,28 @@
             
             <div class="admin-back-shop">
                 <a href="index.html" class="nav-btn" style="width: 100%; justify-content: center; text-decoration: none;">
-                    <i class="fa-solid fa-arrow-left" style="transform: scaleX(-1);"></i> العودة للمتجر
+                    <i class="fa-solid fa-arrow-left"></i> <span data-i18n="admin_return_store">العودة للمتجر</span>
                 </a>
             </div>
         </aside>
 
         <!-- Main Dashboard Content -->
         <main class="admin-content" style="padding-top: 2.5rem;">
-            <!-- Header bar -->
             <header class="admin-header">
                 <div class="admin-title-area">
-                    <h1 id="admin-current-tab-title">لوحة التحكم العامة</h1>
-                    <p id="admin-current-tab-desc">متابعة أداء المتجر، المبيعات وإدارة المنتجات والطلبات بشكل كامل.</p>
+                    <h1 id="admin-current-tab-title" data-i18n="admin_tab_overview_title">لوحة التحكم العامة</h1>
+                    <p id="admin-current-tab-desc" data-i18n="admin_tab_overview_desc">متابعة أداء المتجر، المبيعات وإدارة المنتجات والطلبات بشكل كامل.</p>
                 </div>
-                <div style="background: var(--bg-card); padding: 0.6rem 1.2rem; border-radius: 10px; border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted);">
-                    <i class="fa-solid fa-calendar-days" style="color: var(--primary-color); margin-left: 5px;"></i>
-                    <span id="current-date">اليوم، 3 يونيو 2026</span>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <!-- Language Switcher -->
+                    <div class="language-switcher" id="admin-language-switcher">
+                        <button type="button" class="lang-btn active" id="lang-btn-ar" onclick="changeAdminLanguage('ar')">العربية</button>
+                        <button type="button" class="lang-btn" id="lang-btn-en" onclick="changeAdminLanguage('en')">English</button>
+                    </div>
+                    <div style="background: var(--bg-card); padding: 0.6rem 1.2rem; border-radius: 10px; border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-calendar-days" style="color: var(--primary-color);"></i>
+                        <span id="current-date">اليوم، 3 يونيو 2026</span>
+                    </div>
                 </div>
             </header>
 
@@ -95,28 +101,28 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-info">
-                            <span class="stat-label">إجمالي المبيعات</span>
+                            <span class="stat-label" data-i18n="kpi_revenue">إجمالي المبيعات</span>
                             <span class="stat-value" id="kpi-revenue">0 ر.س</span>
                         </div>
                         <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-info">
-                            <span class="stat-label">عدد الطلبات</span>
+                            <span class="stat-label" data-i18n="kpi_orders">عدد الطلبات</span>
                             <span class="stat-value" id="kpi-orders">0</span>
                         </div>
                         <div class="stat-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-info">
-                            <span class="stat-label">المنتجات النشطة</span>
+                            <span class="stat-label" data-i18n="kpi_active_products">المنتجات النشطة</span>
                             <span class="stat-value" id="kpi-products">0</span>
                         </div>
                         <div class="stat-icon"><i class="fa-solid fa-box-open"></i></div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-info">
-                            <span class="stat-label">متوسط قيمة الطلب</span>
+                            <span class="stat-label" data-i18n="kpi_avg_order">متوسط قيمة الطلب</span>
                             <span class="stat-value" id="kpi-avg-order">0 ر.س</span>
                         </div>
                         <div class="stat-icon"><i class="fa-solid fa-calculator"></i></div>
@@ -134,13 +140,13 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>رقم الطلب</th>
-                                    <th>العميل</th>
-                                    <th>طريقة الدفع</th>
-                                    <th>تاريخ الطلب</th>
-                                    <th>القيمة الإجمالية</th>
-                                    <th>حالة الطلب</th>
-                                    <th>الإجراءات</th>
+                                    <th data-i18n="table_order_id">رقم الطلب</th>
+                                    <th data-i18n="table_customer">العميل</th>
+                                    <th data-i18n="table_payment_method">طريقة الدفع</th>
+                                    <th data-i18n="table_date">تاريخ الطلب</th>
+                                    <th data-i18n="table_total_price">القيمة الإجمالية</th>
+                                    <th data-i18n="table_status">حالة الطلب</th>
+                                    <th data-i18n="table_actions">الإجراءات</th>
                                 </tr>
                             </thead>
                             <tbody id="recent-orders-table-body">

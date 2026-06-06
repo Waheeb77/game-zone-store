@@ -25,6 +25,12 @@
             </a>
             
             <div class="nav-actions">
+                <!-- Language Switcher -->
+                <div class="language-switcher" id="store-language-switcher">
+                    <button type="button" class="lang-btn active" id="lang-btn-ar" onclick="changeStoreLanguage('ar')">العربية</button>
+                    <button type="button" class="lang-btn" id="lang-btn-en" onclick="changeStoreLanguage('en')">English</button>
+                </div>
+                
                 <!-- Currency Switcher -->
                 <div class="currency-switcher" id="store-currency-switcher">
                     <button type="button" class="currency-btn active" id="cur-btn-usd" onclick="changeStoreCurrency('USD')">USD ($)</button>
@@ -45,9 +51,9 @@
         <!-- Hero Welcome Section -->
         <section class="hero-section">
             <div class="container">
-                <span class="hero-subtitle">متجر الألعاب الاحترافي الأول</span>
+                <span class="hero-subtitle" data-i18n="hero_subtitle">متجر الألعاب الاحترافي الأول</span>
                 <h1 class="hero-title" id="hero-store-title">Game Zone Store</h1>
-                <p class="hero-desc">اكتشف تشكيلتنا الاحترافية من قطع غيار ومستلزمات ألعاب الكمبيوتر. نوفر قطعاً جديدة ومستعملة مضمونة بأسعار منافسة مع دعم فني متكامل.</p>
+                <p class="hero-desc" data-i18n="hero_desc">اكتشف تشكيلتنا الاحترافية من قطع غيار ومستلزمات ألعاب الكمبيوتر. نوفر قطعاً جديدة ومستعملة مضمونة بأسعار منافسة مع دعم فني متكامل.</p>
             </div>
         </section>
 
@@ -55,12 +61,10 @@
         <section class="store-controls container">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" placeholder="ابحث عن كرت شاشة، معالج، لوحة أم..." oninput="filterProducts()">
+                <input type="text" id="search-input" data-i18n-placeholder="search_placeholder" placeholder="ابحث عن كرت شاشة، معالج، لوحة أم..." oninput="filterProducts()">
             </div>
             <div class="categories-container" id="categories-list">
-                <button class="category-btn active" onclick="selectCategory('all', this)">الكل</button>
-                <button class="category-btn" onclick="selectCategory('جديد', this)"><i class="fa-solid fa-sparkles" style="margin-left: 5px;"></i>قطع جديدة</button>
-                <button class="category-btn" onclick="selectCategory('مستعمل', this)"><i class="fa-solid fa-recycle" style="margin-left: 5px;"></i>قطع مستعملة</button>
+                <!-- Will be loaded dynamically via JavaScript -->
             </div>
         </section>
 
@@ -83,7 +87,7 @@
                 <i class="fa-solid fa-gamepad" style="color: var(--primary-color);"></i>
                 <span id="footer-store-name">Game Zone<span> Store</span></span>
             </div>
-            <p class="footer-copy">جميع الحقوق محفوظة &copy; 2026. متجر قطع ومستلزمات الألعاب الاحترافي.</p>
+            <p class="footer-copy" data-i18n="footer_copy">جميع الحقوق محفوظة &copy; 2026. متجر قطع ومستلزمات الألعاب الاحترافي.</p>
         </div>
     </footer>
 
@@ -91,7 +95,7 @@
     <div class="cart-drawer-overlay" id="cart-drawer-overlay" onclick="toggleCart(false)">
         <div class="cart-drawer" onclick="event.stopPropagation()">
             <div class="cart-header">
-                <h2><i class="fa-solid fa-cart-shopping"></i> عربة التسوق</h2>
+                <h2><i class="fa-solid fa-cart-shopping"></i> <span data-i18n="cart_title">عربة التسوق</span></h2>
                 <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
@@ -99,28 +103,28 @@
                 <!-- Dynamic cart items will render here -->
                 <div class="empty-cart-message">
                     <i class="fa-solid fa-gamepad"></i>
-                    <p>عربتك فارغة من العتاد حالياً</p>
+                    <p data-i18n="cart_empty">عربتك فارغة من العتاد حالياً</p>
                 </div>
             </div>
 
             <div class="cart-footer">
                 <!-- Promo Code Box -->
                 <div style="display: flex; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;">
-                    <input type="text" id="cart-promo-input" placeholder="كوبون الخصم (مثال: GAME20)" style="flex-grow: 1; padding: 0.5rem 0.8rem; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-family: var(--font-cairo); font-size: 0.8rem; outline: none;">
-                    <button type="button" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 8px; font-weight:700;" onclick="applyPromoCode()">تطبيق</button>
+                    <input type="text" id="cart-promo-input" data-i18n-placeholder="promo_placeholder" placeholder="كوبون الخصم (مثال: GAME20)" style="flex-grow: 1; padding: 0.5rem 0.8rem; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-family: var(--font-cairo); font-size: 0.8rem; outline: none;">
+                    <button type="button" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 8px; font-weight:700;" onclick="applyPromoCode()" data-i18n="apply_promo">تطبيق</button>
                 </div>
                 <!-- Discount Row -->
                 <div id="cart-discount-row" style="display: none; justify-content: space-between; align-items: center; font-size: 0.95rem; color: #00f5d4; margin-bottom: 8px; font-weight:600;">
-                    <span>خصم الكوبون (<span id="discount-pct-label">0</span>%):</span>
+                    <span><span data-i18n="coupon_discount">خصم الكوبون</span> (<span id="discount-pct-label">0</span>%):</span>
                     <span id="cart-discount-value">-0 $</span>
                 </div>
 
                 <div class="cart-summary-row">
-                    <span>المجموع الإجمالي:</span>
+                    <span data-i18n="cart_total">المجموع الإجمالي:</span>
                     <span class="cart-summary-total" id="cart-total-value">0 $</span>
                 </div>
                 <button class="checkout-btn" id="cart-checkout-btn" onclick="openCheckoutModal()" disabled>
-                    <i class="fa-solid fa-credit-card"></i> إتمام عملية الشراء
+                    <i class="fa-solid fa-credit-card"></i> <span data-i18n="checkout_btn">إتمام عملية الشراء</span>
                 </button>
             </div>
         </div>
@@ -130,7 +134,7 @@
     <div class="modal-overlay" id="checkout-modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>إتمام طلب الشراء والدفع</h3>
+                <h3><span data-i18n="checkout_title">إتمام طلب الشراء والدفع</span></h3>
                 <button class="close-btn" onclick="closeCheckoutModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
@@ -138,57 +142,57 @@
             <div class="modal-body" id="checkout-form-body">
                 <form id="checkout-form" onsubmit="submitOrder(event)">
                     <!-- Contact Info -->
-                    <h4 style="margin-bottom: 1rem; color: #fff; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;"><i class="fa-solid fa-user-tie" style="color: var(--primary-color); margin-left: 8px;"></i>بيانات الشحن والتوصيل</h4>
+                    <h4 style="margin-bottom: 1rem; color: #fff; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;"><i class="fa-solid fa-user-tie" style="color: var(--primary-color); margin-left: 8px;"></i><span data-i18n="shipping_info">بيانات الشحن والتوصيل</span></h4>
                     
                     <div class="form-group">
-                        <label for="checkout-name">الاسم الكامل *</label>
-                        <input type="text" id="checkout-name" required placeholder="أدخل اسمك ثلاثي">
+                        <label for="checkout-name" data-i18n="checkout_name_label">الاسم الكامل *</label>
+                        <input type="text" id="checkout-name" required data-i18n-placeholder="checkout_name_placeholder" placeholder="أدخل اسمك ثلاثي">
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="checkout-phone">رقم الجوال *</label>
-                            <input type="tel" id="checkout-phone" required placeholder="مثال: +9665xxxxxxxx أو +967xxxxxxx" title="يرجى إدخال رقم هاتف صالح مع رمز الدولة">
+                            <label for="checkout-phone" data-i18n="checkout_phone_label">رقم الجوال *</label>
+                            <input type="tel" id="checkout-phone" required data-i18n-placeholder="checkout_phone_placeholder" placeholder="مثال: +9665xxxxxxxx أو +967xxxxxxx" title="يرجى إدخال رقم هاتف صالح مع رمز الدولة">
                         </div>
                         <div class="form-group">
-                            <label for="checkout-city">المدينة *</label>
-                            <input type="text" id="checkout-city" required placeholder="مثال: الرياض">
+                            <label for="checkout-city" data-i18n="checkout_city_label">المدينة *</label>
+                            <input type="text" id="checkout-city" required data-i18n-placeholder="checkout_city_placeholder" placeholder="مثال: الرياض">
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="checkout-address">العنوان التفصيلي للحي والشارع *</label>
-                        <textarea id="checkout-address" rows="2" required placeholder="مثال: حي الياسمين، شارع الملقا، مبنى رقم 12"></textarea>
+                        <label for="checkout-address" data-i18n="checkout_address_label">العنوان التفصيلي للحي والشارع *</label>
+                        <textarea id="checkout-address" rows="2" required data-i18n-placeholder="checkout_address_placeholder" placeholder="مثال: حي الياسمين، شارع الملقا، مبنى رقم 12"></textarea>
                     </div>
 
                     <!-- Payment Selector -->
-                    <h4 style="margin: 1.5rem 0 1rem 0; color: #fff; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;"><i class="fa-solid fa-wallet" style="color: var(--primary-color); margin-left: 8px;"></i>طريقة الدفع المفضلة</h4>
+                    <h4 style="margin: 1.5rem 0 1rem 0; color: #fff; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;"><i class="fa-solid fa-wallet" style="color: var(--primary-color); margin-left: 8px;"></i><span data-i18n="payment_method">طريقة الدفع المفضلة</span></h4>
                     
                     <div class="payment-tabs" id="checkout-payment-tabs">
                         <!-- Will display based on settings -->
                         <button type="button" class="payment-tab-btn active" id="tab-btn-cod" onclick="switchPaymentTab('cod')">
                             <i class="fa-solid fa-hand-holding-dollar"></i>
-                            <span>الدفع عند الاستلام</span>
+                            <span data-i18n="pay_cod">الدفع عند الاستلام</span>
                         </button>
                         <button type="button" class="payment-tab-btn" id="tab-btn-bank" onclick="switchPaymentTab('bank')">
                             <i class="fa-solid fa-building-columns"></i>
-                            <span>تحويل بنكي</span>
+                            <span data-i18n="pay_bank">تحويل بنكي</span>
                         </button>
                         <button type="button" class="payment-tab-btn" id="tab-btn-card" onclick="switchPaymentTab('card')">
                             <i class="fa-solid fa-credit-card"></i>
-                            <span>بطاقة مدى / ائتمان</span>
+                            <span data-i18n="pay_card">بطاقة مدى / ائتمان</span>
                         </button>
                         <button type="button" class="payment-tab-btn" id="tab-btn-bcash" onclick="switchPaymentTab('bcash')">
                             <i class="fa-solid fa-mobile-screen-button"></i>
-                            <span>B-Cash (البسيري)</span>
+                            <span data-i18n="pay_bcash">B-Cash (البسيري)</span>
                         </button>
                         <button type="button" class="payment-tab-btn" id="tab-btn-qurooshi" onclick="switchPaymentTab('qurooshi')">
                             <i class="fa-solid fa-wallet"></i>
-                            <span>محفظة قروشي (أمجاد)</span>
+                            <span data-i18n="pay_qurooshi">محفظة قروشي (أمجاد)</span>
                         </button>
                         <button type="button" class="payment-tab-btn" id="tab-btn-kuraimi" onclick="switchPaymentTab('kuraimi')">
                             <i class="fa-solid fa-building-columns"></i>
-                            <span>بنك الكريمي</span>
+                            <span data-i18n="pay_kuraimi">بنك الكريمي</span>
                         </button>
                     </div>
 
@@ -197,25 +201,25 @@
                     <div class="payment-panel active" id="panel-cod">
                         <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
                             <i class="fa-solid fa-circle-info" style="color: var(--primary-color); margin-left: 5px;"></i>
-                            الدفع نقداً أو ببطاقة مدى عند استلام الطلب من المندوب. لا توجد رسوم إضافية على التوصيل.
+                            <span data-i18n="cod_info">الدفع نقداً أو ببطاقة مدى عند استلام الطلب من المندوب. لا توجد رسوم إضافية على التوصيل.</span>
                         </p>
                     </div>
 
                     <!-- 2. Bank Transfer Panel -->
                     <div class="payment-panel" id="panel-bank">
                         <div class="bank-info-card">
-                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">يرجى تحويل المبلغ المطلوب إلى الحساب البنكي التالي:</p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;" data-i18n="bank_info_text">يرجى تحويل المبلغ المطلوب إلى الحساب البنكي التالي:</p>
                             
                             <div class="bank-detail-row">
-                                <span class="bank-label">اسم البنك</span>
+                                <span class="bank-label" data-i18n="bank_name">اسم البنك</span>
                                 <span class="bank-value" id="bank-name-display">مصرف الراجحي</span>
                             </div>
                             <div class="bank-detail-row">
-                                <span class="bank-label">صاحب الحساب</span>
+                                <span class="bank-label" data-i18n="bank_holder">صاحب الحساب</span>
                                 <span class="bank-value" id="bank-holder-display">مؤسسة منطقة الألعاب التجارية</span>
                             </div>
                             <div class="bank-detail-row">
-                                <span class="bank-label">رقم الآيبان IBAN</span>
+                                <span class="bank-label" data-i18n="bank_iban">رقم الآيبان IBAN</span>
                                 <span class="bank-value">
                                     <span id="bank-iban-display" style="font-family: monospace; font-size: 0.95rem; direction: ltr;">SA9380000123456789012345</span>
                                     <button type="button" class="copy-btn" onclick="copyIban()"><i class="fa-solid fa-copy"></i></button>
@@ -225,12 +229,12 @@
                             <!-- Receipt upload simulator -->
                             <div class="receipt-upload-box" onclick="simulateReceiptUpload()">
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span>اضغط هنا لرفع صورة إيصال التحويل (اختياري)</span>
+                                <span data-i18n="upload_receipt">اضغط هنا لرفع صورة إيصال التحويل (اختياري)</span>
                                 <input type="file" id="bank-receipt-file" style="display: none;" accept="image/*" onchange="handleReceiptUploaded(this)">
                             </div>
                             <div class="receipt-preview" id="receipt-upload-preview">
-                                <span><i class="fa-solid fa-circle-check"></i> تم إرفاق صورة إيصال التحويل بنجاح</span>
-                                <button type="button" class="btn-danger" style="padding: 2px 8px; font-size: 0.75rem;" onclick="removeReceipt()">حذف</button>
+                                <span><i class="fa-solid fa-circle-check"></i> <span data-i18n="receipt_attached">تم إرفاق صورة إيصال التحويل بنجاح</span></span>
+                                <button type="button" class="btn-danger" style="padding: 2px 8px; font-size: 0.75rem;" onclick="removeReceipt()" data-i18n="delete_btn">حذف</button>
                             </div>
                         </div>
                     </div>
@@ -249,11 +253,11 @@
                                     <div class="card-number-display" id="v-card-number">•••• •••• •••• ••••</div>
                                     <div class="card-holder-info">
                                         <div>
-                                            <div class="card-holder-label">صاحب البطاقة</div>
+                                            <div class="card-holder-label" data-i18n="card_holder_title">صاحب البطاقة</div>
                                             <div class="card-holder-name-display" id="v-card-holder">CARDHOLDER NAME</div>
                                         </div>
                                         <div class="card-expiry-display">
-                                            <div class="card-holder-label">الانتهاء</div>
+                                            <div class="card-holder-label" data-i18n="card_expiry_title">الانتهاء</div>
                                             <div class="card-expiry-val" id="v-card-expiry">MM/YY</div>
                                         </div>
                                     </div>
@@ -264,7 +268,7 @@
                                     <div class="card-signature-strip">
                                         <div class="card-cvv-display" id="v-card-cvv">•••</div>
                                     </div>
-                                    <div class="card-back-text">
+                                    <div class="card-back-text" data-i18n="card_back_text">
                                         تخضع هذه البطاقة لشروط الاستخدام المعتمدة. للاستخدام الفردي فقط. صممت لأغراض المحاكاة والشراء التجريبي.
                                     </div>
                                 </div>
@@ -273,22 +277,22 @@
 
                         <!-- Card Inputs -->
                         <div class="form-group">
-                            <label for="card-holder">اسم حامل البطاقة (بالإنجليزية كما هو مطبوع) *</label>
+                            <label for="card-holder" data-i18n="card_holder_label">اسم حامل البطاقة (بالإنجليزية كما هو مطبوع) *</label>
                             <input type="text" id="card-holder" placeholder="MOHAMMED AL-OTAIBI" oninput="updateCardDetails()" onfocus="setCardFlip(false)">
                         </div>
                         
                         <div class="form-group">
-                            <label for="card-number">رقم البطاقة *</label>
+                            <label for="card-number" data-i18n="card_number_label">رقم البطاقة *</label>
                             <input type="text" id="card-number" placeholder="4000 1234 5678 9010" maxlength="19" oninput="updateCardDetails()" onfocus="setCardFlip(false)">
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="card-expiry">تاريخ الانتهاء *</label>
+                                <label for="card-expiry" data-i18n="card_expiry_label">تاريخ الانتهاء *</label>
                                 <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" oninput="updateCardDetails()" onfocus="setCardFlip(false)">
                             </div>
                             <div class="form-group">
-                                <label for="card-cvv">الرمز السري (CVV) *</label>
+                                <label for="card-cvv" data-i18n="card_cvv_label">الرمز السري (CVV) *</label>
                                 <input type="password" id="card-cvv" placeholder="•••" maxlength="3" oninput="updateCardDetails()" onfocus="setCardFlip(true)" onblur="setCardFlip(false)">
                             </div>
                         </div>
@@ -297,15 +301,15 @@
                     <!-- 4. B-Cash Panel -->
                     <div class="payment-panel" id="panel-bcash">
                         <div class="bank-info-card">
-                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">يرجى تحويل المبلغ المطلوب عبر خدمة B-Cash (بنك البسيري) إلى الرقم التالي:</p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;" data-i18n="bcash_info_text">يرجى تحويل المبلغ المطلوب عبر خدمة B-Cash (بنك البسيري) إلى الرقم التالي:</p>
                             <div class="bank-detail-row">
-                                <span class="bank-label">رقم حساب B-Cash</span>
+                                <span class="bank-label" data-i18n="bcash_number">رقم حساب B-Cash</span>
                                 <span class="bank-value" id="bcash-number-display" style="font-family: monospace; font-size: 1.05rem; letter-spacing: 1px; color: var(--primary-color);">770000000</span>
                             </div>
                             <!-- Receipt upload simulator -->
                             <div class="receipt-upload-box" onclick="simulateReceiptUpload()">
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span>اضغط هنا لرفع صورة إشعار تحويل B-Cash (اختياري)</span>
+                                <span data-i18n="upload_bcash_receipt">اضغط هنا لرفع صورة إشعار تحويل B-Cash (اختياري)</span>
                             </div>
                         </div>
                     </div>
@@ -313,15 +317,15 @@
                     <!-- 5. Qurooshi Panel -->
                     <div class="payment-panel" id="panel-qurooshi">
                         <div class="bank-info-card">
-                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">يرجى تحويل المبلغ المطلوب عبر محفظة قروشي (بنك أمجاد) إلى الرقم التالي:</p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;" data-i18n="qurooshi_info_text">يرجى تحويل المبلغ المطلوب عبر محفظة قروشي (بنك أمجاد) إلى الرقم التالي:</p>
                             <div class="bank-detail-row">
-                                <span class="bank-label">رقم محفظة قروشي</span>
+                                <span class="bank-label" data-i18n="qurooshi_number">رقم محفظة قروشي</span>
                                 <span class="bank-value" id="qurooshi-number-display" style="font-family: monospace; font-size: 1.05rem; letter-spacing: 1px; color: var(--primary-color);">771000000</span>
                             </div>
                             <!-- Receipt upload simulator -->
                             <div class="receipt-upload-box" onclick="simulateReceiptUpload()">
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span>اضغط هنا لرفع صورة إشعار تحويل قروشي (اختياري)</span>
+                                <span data-i18n="upload_qurooshi_receipt">اضغط هنا لرفع صورة إشعار تحويل قروشي (اختياري)</span>
                             </div>
                         </div>
                     </div>
@@ -329,27 +333,27 @@
                     <!-- 6. Kuraimi Panel -->
                     <div class="payment-panel" id="panel-kuraimi">
                         <div class="bank-info-card">
-                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">يرجى تحويل المبلغ المطلوب إلى حساب بنك الكريمي التالي:</p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;" data-i18n="kuraimi_info_text">يرجى تحويل المبلغ المطلوب إلى حساب بنك الكريمي التالي:</p>
                             <div class="bank-detail-row">
-                                <span class="bank-label">رقم حساب الكريمي</span>
+                                <span class="bank-label" data-i18n="kuraimi_number">رقم حساب الكريمي</span>
                                 <span class="bank-value" id="kuraimi-number-display" style="font-family: monospace; font-size: 1.05rem; letter-spacing: 1px; color: var(--primary-color);">3000000</span>
                             </div>
                             <!-- Receipt upload simulator -->
                             <div class="receipt-upload-box" onclick="simulateReceiptUpload()">
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
-                                <span>اضغط هنا لرفع صورة إشعار تحويل الكريمي (اختياري)</span>
+                                <span data-i18n="upload_kuraimi_receipt">اضغط هنا لرفع صورة إشعار تحويل الكريمي (اختياري)</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Checkout Summary & Action -->
                     <div style="background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; border: 1px solid rgba(255,255,255,0.05)">
-                        <span>المبلغ الإجمالي المطلوب دفعه:</span>
+                        <span data-i18n="checkout_total_price_label">المبلغ الإجمالي المطلوب دفعه:</span>
                         <span style="color: var(--text-gold);" id="checkout-total-price">0 $</span>
                     </div>
 
                     <button type="submit" class="checkout-btn" id="submit-order-btn">
-                        <i class="fa-solid fa-circle-check"></i> تأكيد الطلب والدفع
+                        <i class="fa-solid fa-circle-check"></i> <span data-i18n="confirm_order">تأكيد الطلب والدفع</span>
                     </button>
                 </form>
             </div>
@@ -360,9 +364,12 @@
                     <div class="success-icon-container">
                         <i class="fa-solid fa-check"></i>
                     </div>
-                    <h4 class="success-title">تم إرسال طلبك بنجاح!</h4>
-                    <p class="success-desc">شكراً لثقتك بمتجرنا. تم استلام طلبك برقم <strong id="success-order-id">#1001</strong> بنجاح. سيقوم فريقنا بالتواصل معك قريباً لتأكيد الشحن والتوصيل.</p>
-                    <button class="btn-primary" style="padding: 0.8rem 2.5rem; border-radius: 50px; margin-top: 1rem;" onclick="closeCheckoutModal()">متابعة التسوق</button>
+                    <h4 class="success-title" data-i18n="success_title">تم إرسال طلبك بنجاح!</h4>
+                    <p class="success-desc" id="success-desc-container">
+                        <!-- Will be updated dynamically in JS for proper AR/EN order details -->
+                        شكراً لثقتك بمتجرنا. تم استلام طلبك برقم <strong id="success-order-id">#1001</strong> بنجاح. سيقوم فريقنا بالتواصل معك قريباً لتأكيد الشحن والتوصيل.
+                    </p>
+                    <button class="btn-primary" style="padding: 0.8rem 2.5rem; border-radius: 50px; margin-top: 1rem;" onclick="closeCheckoutModal()" data-i18n="continue_shopping">متابعة التسوق</button>
                 </div>
             </div>
         </div>

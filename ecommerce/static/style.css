@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
     --primary-color: #00f5d4; /* Neon Cyan */
@@ -21,6 +21,7 @@
     
     --font-cairo: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     --font-tajawal: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-outfit: 'Outfit', 'Inter', sans-serif;
     
     --glass-bg: rgba(5, 6, 11, 0.8);
     --glass-blur: blur(20px);
@@ -45,6 +46,26 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+}
+
+/* Beautiful dynamic background pattern (subtle cybergrid & micro dot pattern) */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -3;
+    pointer-events: none;
+    background-image: 
+        radial-gradient(rgba(0, 245, 212, 0.05) 1.5px, transparent 1.5px),
+        linear-gradient(rgba(168, 85, 247, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168, 85, 247, 0.02) 1px, transparent 1px);
+    background-size: 30px 30px, 90px 90px, 90px 90px;
+    background-position: center;
+    opacity: 0.95;
 }
 
 /* Base Container to limit stretching on ultra-wide screens */
@@ -1843,5 +1864,107 @@ tr:hover td {
     .form-row {
         grid-template-columns: 1fr;
         gap: 0;
+    }
+}
+
+/* Language Switcher Styling */
+.language-switcher {
+    display: flex;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    padding: 2px;
+}
+
+.lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font-tajawal);
+    transition: var(--transition-smooth);
+}
+
+.lang-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.lang-btn.active {
+    background: var(--accent-color);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+
+/* LTR Document Direction Overrides */
+html[dir="ltr"] body {
+    font-family: var(--font-outfit);
+}
+
+html[dir="ltr"] .product-category {
+    right: auto;
+    left: 15px;
+}
+
+html[dir="ltr"] table {
+    text-align: left;
+}
+
+html[dir="ltr"] th {
+    text-align: left;
+}
+
+html[dir="ltr"] .admin-sidebar {
+    border-left: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+html[dir="ltr"] .payment-tab-btn:not(:last-child) {
+    border-left: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Dynamic glow animations & cyberpunk micro-interactions */
+.product-card {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    box-shadow: 0 15px 35px rgba(0, 245, 212, 0.15), 0 0 15px rgba(168, 85, 247, 0.1);
+    border-color: var(--primary-color);
+}
+
+.category-btn {
+    transition: transform 0.2s, background 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+.category-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 245, 212, 0.1);
+}
+
+.currency-btn, .lang-btn, .payment-tab-btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.currency-btn:hover, .lang-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Enhance icons with slight pulsing neon glow on hover */
+.logo-container:hover .logo-icon {
+    animation: neonPulse 1.5s infinite alternate;
+}
+
+@keyframes neonPulse {
+    from {
+        text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-color);
+    }
+    to {
+        text-shadow: 0 0 15px var(--primary-color), 0 0 25px var(--primary-color);
     }
 }
