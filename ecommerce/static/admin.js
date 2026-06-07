@@ -185,11 +185,18 @@ function translateAdminPage() {
     });
 }
 
+// Dynamic Base API URL detection
+const API_BASE_URL = (
+    window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' || 
+    window.location.hostname.includes('onrender.com')
+) ? '' : 'https://game-zone-store.onrender.com';
+
 // Hybrid API and LocalStorage helper functions for static page safety
 async function apiGet(endpoint, fallbackKey, defaultVal) {
     try {
         const password = sessionStorage.getItem('admin_password') || 'admin';
-        const response = await fetch(endpoint, {
+        const response = await fetch(API_BASE_URL + endpoint, {
             headers: { 'X-Admin-Password': password }
         });
         if (response.ok) {
@@ -199,18 +206,19 @@ async function apiGet(endpoint, fallbackKey, defaultVal) {
             if (fallbackKey === 'local_orders' && Array.isArray(data)) {
                 let localData = [];
                 try {
-                    localData = JSON.parse(localStorage.getItem('local_orders')) || [];
+                    localData = JSON.parse(localStorage.getItem('local_orders'));
                 } catch (e) {}
+                if (localData && !Array.isArray(localData)) {
+                    localData = [localData];
+                }
                 if (Array.isArray(localData) && localData.length > data.length) {
                     console.log("Server orders database reset detected. Restoring from client LocalStorage...");
-                    // Merge localData and data to prevent any data loss:
                     const merged = [...data];
                     localData.forEach(localOrd => {
-                        if (!merged.some(o => o.id === localOrd.id)) {
+                        if (localOrd && localOrd.id && !merged.some(o => o.id === localOrd.id)) {
                             merged.push(localOrd);
                         }
                     });
-                    // Post back to heal the server database
                     await apiPost(endpoint, fallbackKey, merged);
                     return merged;
                 }
@@ -218,23 +226,30 @@ async function apiGet(endpoint, fallbackKey, defaultVal) {
             
             localStorage.setItem(fallbackKey, JSON.stringify(data));
             return data;
+        } else {
+            console.error(`API GET ${endpoint} failed with status: ${response.status}`);
         }
     } catch (e) {
-        console.warn(`API GET ${endpoint} failed, falling back to LocalStorage.`);
+        console.warn(`API GET ${endpoint} failed, falling back to LocalStorage.`, e);
     }
     const localData = localStorage.getItem(fallbackKey);
     if (localData) {
-        try { return JSON.parse(localData); } catch (e) {}
+        try {
+            const parsed = JSON.parse(localData);
+            if (fallbackKey === 'local_orders' && parsed && !Array.isArray(parsed)) {
+                return [parsed];
+            }
+            return parsed || defaultVal;
+        } catch (e) {}
     }
     localStorage.setItem(fallbackKey, JSON.stringify(defaultVal));
     return defaultVal;
 }
 
 async function apiPost(endpoint, fallbackKey, data) {
-    localStorage.setItem(fallbackKey, JSON.stringify(data));
     try {
         const password = sessionStorage.getItem('admin_password') || 'admin';
-        const response = await fetch(endpoint, {
+        const response = await fetch(API_BASE_URL + endpoint, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -243,12 +258,46 @@ async function apiPost(endpoint, fallbackKey, data) {
             body: JSON.stringify(data)
         });
         if (response.ok) {
+            // For orders, if we are posting a single order, append it to local_orders instead of overwriting
+            if (fallbackKey === 'local_orders' && data && !Array.isArray(data)) {
+                let localOrders = [];
+                try {
+                    localOrders = JSON.parse(localStorage.getItem('local_orders'));
+                } catch (e) {}
+                if (!Array.isArray(localOrders)) {
+                    localOrders = localOrders ? [localOrders] : [];
+                }
+                if (!localOrders.some(o => o.id === data.id)) {
+                    localOrders.push(data);
+                }
+                localStorage.setItem(fallbackKey, JSON.stringify(localOrders));
+            } else {
+                localStorage.setItem(fallbackKey, JSON.stringify(data));
+            }
             return { success: true };
+        } else {
+            const errData = await response.json().catch(() => ({}));
+            return { success: false, error: errData.error || `Server error: ${response.status}` };
         }
     } catch (e) {
-        console.warn(`API POST ${endpoint} failed, saved to LocalStorage only.`);
+        console.warn(`API POST ${endpoint} failed, saved to LocalStorage only.`, e);
+        if (fallbackKey === 'local_orders' && data && !Array.isArray(data)) {
+            let localOrders = [];
+            try {
+                localOrders = JSON.parse(localStorage.getItem('local_orders'));
+            } catch (e) {}
+            if (!Array.isArray(localOrders)) {
+                localOrders = localOrders ? [localOrders] : [];
+            }
+            if (!localOrders.some(o => o.id === data.id)) {
+                localOrders.push(data);
+            }
+            localStorage.setItem(fallbackKey, JSON.stringify(localOrders));
+        } else {
+            localStorage.setItem(fallbackKey, JSON.stringify(data));
+        }
+        return { success: true, localOnly: true };
     }
-    return { success: true, localOnly: true };
 }
 
 // Admin Authentication functions
