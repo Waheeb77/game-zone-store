@@ -60,6 +60,11 @@
                             </a>
                         </li>
                         <li>
+                            <a href="#" class="admin-menu-link" onclick="switchAdminTab('coupons', this)">
+                                <i class="fa-solid fa-tags"></i> <span data-i18n="admin_menu_coupons">أكواد الخصم</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="#" class="admin-menu-link" onclick="switchAdminTab('settings', this)">
                                 <i class="fa-solid fa-gears"></i> <span data-i18n="admin_menu_settings">إعدادات المتجر</span>
                             </a>
@@ -221,6 +226,39 @@
                             </thead>
                             <tbody id="orders-table-body">
                                 <!-- Generated Dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. COUPONS TAB -->
+            <div class="admin-tab-content" id="tab-coupons">
+                <div class="action-header-row">
+                    <h3 style="font-family: var(--font-tajawal); font-size: 1.2rem; font-weight: 700;" data-i18n="admin_tab_coupons_title">إدارة أكواد الخصم</h3>
+                    <button class="btn-primary" onclick="openCouponModal('add')">
+                        <i class="fa-solid fa-circle-plus"></i> <span data-i18n="admin_btn_add_coupon">إضافة كود خصم جديد</span>
+                    </button>
+                </div>
+                
+                <div class="admin-card-table">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="table_coupon_code">كود الخصم</th>
+                                    <th data-i18n="table_coupon_discount">نسبة الخصم</th>
+                                    <th data-i18n="table_coupon_limit">حد الاستخدام</th>
+                                    <th data-i18n="table_coupon_uses">عدد الاستخدامات</th>
+                                    <th data-i18n="table_coupon_expiry">تاريخ الانتهاء</th>
+                                    <th data-i18n="table_coupon_status">الحالة</th>
+                                    <th data-i18n="table_coupon_actions">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coupons-table-body">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--text-muted);">لا توجد أكواد خصم حالياً. أضف كوداً جديداً للبدء.</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -427,6 +465,11 @@
                             <select id="product-category" required>
                                 <option value="جديد">جديد</option>
                                 <option value="مستعمل">مستعمل</option>
+                                <option value="إكسسوارات">إكسسوارات</option>
+                                <option value="تجميعات">تجميعات</option>
+                                <option value="شاشات">شاشات</option>
+                                <option value="طاولات وكراسي">طاولات وكراسي</option>
+                                <option value="لابتوبات">لابتوبات</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -489,6 +532,47 @@
             </div>
             <div class="modal-body" id="order-details-modal-body">
                 <!-- Content generated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Coupon Add/Edit Dialog Modal -->
+    <div class="modal-overlay" id="coupon-modal-overlay">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3 id="coupon-modal-title">إضافة كود خصم جديد</h3>
+                <button class="close-btn" onclick="closeCouponModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="coupon-form" onsubmit="saveCoupon(event)">
+                    <input type="hidden" id="coupon-index-field">
+                    
+                    <div class="form-group">
+                        <label for="coupon-code" data-i18n="coupon_code_label">كود الخصم *</label>
+                        <input type="text" id="coupon-code" required placeholder="مثال: GAME20" style="text-transform: uppercase;">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="coupon-discount" data-i18n="coupon_discount_label">نسبة الخصم (%) *</label>
+                            <input type="number" id="coupon-discount" required min="1" max="100" placeholder="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="coupon-limit" data-i18n="coupon_limit_label">حد الاستخدام (اتركه فارغاً لغير محدود)</label>
+                            <input type="number" id="coupon-limit" min="0" placeholder="مثال: 10">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="coupon-expiry" data-i18n="coupon_expiry_label">تاريخ الانتهاء (اتركه فارغاً لغير محدود)</label>
+                        <input type="date" id="coupon-expiry">
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+                        <button type="submit" class="btn-primary" style="flex: 1; justify-content: center;"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="btn_save_coupon">حفظ كود الخصم</span></button>
+                        <button type="button" class="btn-secondary" onclick="closeCouponModal()"><span data-i18n="btn_cancel">إلغاء</span></button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
