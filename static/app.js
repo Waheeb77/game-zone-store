@@ -326,17 +326,26 @@ function renderCategories() {
     }).join('');
 }
 
+// Dynamic Base API URL detection
+const API_BASE_URL = (
+    window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' || 
+    window.location.hostname.includes('onrender.com')
+) ? '' : 'https://game-zone-store.onrender.com';
+
 // Hybrid API and LocalStorage helper functions
 async function apiGet(endpoint, fallbackKey, defaultVal) {
     try {
-        const response = await fetch(endpoint);
+        const response = await fetch(API_BASE_URL + endpoint);
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem(fallbackKey, JSON.stringify(data));
             return data;
+        } else {
+            console.error(`API GET ${endpoint} failed with status: ${response.status}`);
         }
     } catch (e) {
-        console.warn(`API GET ${endpoint} failed, falling back to LocalStorage.`);
+        console.warn(`API GET ${endpoint} failed, falling back to LocalStorage.`, e);
     }
     const localData = localStorage.getItem(fallbackKey);
     if (localData) {
@@ -347,20 +356,23 @@ async function apiGet(endpoint, fallbackKey, defaultVal) {
 }
 
 async function apiPost(endpoint, fallbackKey, data) {
-    localStorage.setItem(fallbackKey, JSON.stringify(data));
     try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(API_BASE_URL + endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
         if (response.ok) {
+            localStorage.setItem(fallbackKey, JSON.stringify(data));
             return { success: true };
+        } else {
+            const errData = await response.json().catch(() => ({}));
+            return { success: false, error: errData.error || `Server error: ${response.status}` };
         }
     } catch (e) {
-        console.warn(`API POST ${endpoint} failed, saved to LocalStorage only.`);
+        console.error(`API POST ${endpoint} failed:`, e);
+        return { success: false, error: "فشل الاتصال بالخادم. يرجى التحقق من اتصال الإنترنت." };
     }
-    return { success: true, localOnly: true };
 }
 
 // Initialize Page
