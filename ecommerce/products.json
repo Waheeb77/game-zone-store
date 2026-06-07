@@ -130,5 +130,38 @@
     "description": "<b>طاولة قيمنق كهربائية ذكية مع تحكم بالارتفاع</b><br>تحكم كهربائي سلس لحفظ الارتفاع المناسب لك. سطح مغطى بألياف الكربون المقاومة للخدش، مع حامل للأكواب وحامل لسماعة الرأس وإضاءة RGB مدمجة.",
     "description_en": "<b>Smart electric adjustable height gaming desk.</b><br>Smooth electric control to save height presets. Scratch-resistant carbon fiber texture desktop, with cup holder, headset hook, and built-in RGB.",
     "image": "https://images.unsplash.com/photo-1618477388954-7852f32655ec?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 13,
+    "title": "لابتوب قيمنق ASUS ROG Zephyrus G14 RTX 4070",
+    "title_en": "ASUS ROG Zephyrus G14 Gaming Laptop RTX 4070",
+    "category": "لابتوبات",
+    "price": 1499,
+    "stock": 3,
+    "description": "<b>لابتوب ألعاب قوي وخفيف بوزن 1.5 كجم فقط</b><br>معالج AMD Ryzen 9 وكرت RTX 4070. شاشة 14 بوصة OLED بتردد 120Hz. مثالي للقيمرز وصناع المحتوى المتنقلين.",
+    "description_en": "<b>Powerful and lightweight 1.5kg gaming laptop.</b><br>AMD Ryzen 9 processor and RTX 4070 GPU. 14-inch OLED display at 120Hz. Ideal for gamers and content creators on the move.",
+    "image": "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 14,
+    "title": "لابتوب ألعاب Lenovo Legion Pro 5i RTX 4060",
+    "title_en": "Lenovo Legion Pro 5i Gaming Laptop RTX 4060",
+    "category": "لابتوبات",
+    "price": 1199,
+    "stock": 5,
+    "description": "<b>أداء ألعاب استثنائي مع تبريد Legion Coldfront 5.0</b><br>معالج Intel Core i7 الجيل 14 مع كرت شاشة RTX 4060. ذاكرة 16GB DDR5 وشاشة 16 بوصة بدقة WQXGA وتردد 165Hz.",
+    "description_en": "<b>Exceptional gaming performance with Legion Coldfront 5.0 cooling.</b><br>Intel Core i7 14th Gen and RTX 4060 GPU. 16GB DDR5 RAM, 16-inch WQXGA 165Hz display.",
+    "image": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": 15,
+    "title": "لابتوب ألعاب فاخر Razer Blade 16 RTX 4080",
+    "title_en": "Razer Blade 16 Premium Gaming Laptop RTX 4080",
+    "category": "لابتوبات",
+    "price": 2899,
+    "stock": 2,
+    "description": "<b>قمة الفخامة والأداء في عالم لابتوبات الألعاب</b><br>هيكل ألومنيوم موحد بالكامل. معالج Core i9 مع كرت شاشة RTX 4080. شاشة 16 بوصة بميزة Dual-Mode Mini-LED (تغيير الدقة والتردد بين 4K/120Hz و FHD+/240Hz).",
+    "description_en": "<b>The pinnacle of luxury and performance in gaming laptops.</b><br>Full aluminum unibody chassis. Core i9 CPU with RTX 4080 GPU. 16-inch Dual-Mode Mini-LED display (switches between 4K/120Hz and FHD+/240Hz).",
+    "image": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=600&auto=format&fit=crop&q=80"
   }
 ]

@@ -161,7 +161,8 @@ const i18n = {
     cat_acc: "إكسسوارات",
     cat_builds: "تجميعات كاملة",
     cat_monitors: "شاشات",
-    cat_furniture: "طاولات وكراسي"
+    cat_furniture: "طاولات وكراسي",
+    cat_laptops: "لابتوبات"
   },
   en: {
     hero_subtitle: "The Ultimate Professional Gaming Store",
@@ -237,7 +238,8 @@ const i18n = {
     cat_acc: "Accessories",
     cat_builds: "Complete Builds",
     cat_monitors: "Monitors",
-    cat_furniture: "Gaming Furniture"
+    cat_furniture: "Gaming Furniture",
+    cat_laptops: "Laptops"
   }
 };
 
@@ -308,7 +310,8 @@ function renderCategories() {
         { id: 'إكسسوارات', labelKey: 'cat_acc', icon: 'fa-keyboard' },
         { id: 'تجميعات', labelKey: 'cat_builds', icon: 'fa-laptop-code' },
         { id: 'شاشات', labelKey: 'cat_monitors', icon: 'fa-desktop' },
-        { id: 'طاولات وكراسي', labelKey: 'cat_furniture', icon: 'fa-couch' }
+        { id: 'طاولات وكراسي', labelKey: 'cat_furniture', icon: 'fa-couch' },
+        { id: 'لابتوبات', labelKey: 'cat_laptops', icon: 'fa-laptop' }
     ];
 
     list.innerHTML = cats.map(cat => {
@@ -597,6 +600,7 @@ function renderProducts() {
             else if (product.category === 'تجميعات') catBadge = 'Builds';
             else if (product.category === 'شاشات') catBadge = 'Monitors';
             else if (product.category === 'طاولات وكراسي') catBadge = 'Gaming Furniture';
+            else if (product.category === 'لابتوبات') catBadge = 'Laptops';
         }
 
         // Stock labels and visual status
@@ -777,14 +781,40 @@ function applyPromoCode() {
         return;
     }
 
-    if (code === 'GAME20') {
-        discountRate = 0.20; // 20% off
-        activePromoCode = 'GAME20';
-        alert(currentLang === 'en' ? "Success! Promo code applied (20% off)." : "نجاح! تم تطبيق كوبون الخصم بنجاح (خصم 20%).");
-    } else if (code === 'START10') {
-        discountRate = 0.10; // 10% off
-        activePromoCode = 'START10';
-        alert(currentLang === 'en' ? "Success! Promo code applied (10% off)." : "نجاح! تم تطبيق كوبون الخصم بنجاح (خصم 10%).");
+    // Dynamic Coupons Check
+    if (!settings.coupons) settings.coupons = [];
+    const coupon = settings.coupons.find(c => c.code === code);
+
+    if (coupon) {
+        // Expiry check
+        if (coupon.expiryDate) {
+            const exp = new Date(coupon.expiryDate);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            if (today > exp) {
+                alert(currentLang === 'en' ? "This promo code has expired." : "كود الخصم هذا منتهي الصلاحية.");
+                discountRate = 0;
+                activePromoCode = "";
+                updateCartUI();
+                return;
+            }
+        }
+
+        // Limit check
+        if (coupon.usageLimit && coupon.usageLimit > 0 && (coupon.usageCount || 0) >= coupon.usageLimit) {
+            alert(currentLang === 'en' ? "This promo code has reached its usage limit." : "لقد استنفد كود الخصم هذا الحد الأقصى للاستخدام.");
+            discountRate = 0;
+            activePromoCode = "";
+            updateCartUI();
+            return;
+        }
+
+        discountRate = coupon.discount / 100;
+        activePromoCode = coupon.code;
+        const msg = currentLang === 'en' 
+            ? `Success! Promo code applied (${coupon.discount}% off).` 
+            : `نجاح! تم تطبيق كود الخصم بنجاح (خصم ${coupon.discount}%).`;
+        alert(msg);
     } else {
         alert(currentLang === 'en' ? "Invalid or expired coupon code." : "كوبون غير صالح أو منتهي الصلاحية.");
         discountRate = 0;
@@ -1123,6 +1153,24 @@ async function submitOrder(event) {
             if (!localOrders.some(o => o.id === orderData.id)) {
                 localOrders.push(orderData);
                 localStorage.setItem('local_orders', JSON.stringify(localOrders));
+            }
+            
+            // If a promo code was used, increment its usage count in settings on the server
+            if (activePromoCode) {
+                try {
+                    // Fetch latest settings from server to avoid race conditions
+                    const freshSettings = await apiGet('/api/settings', 'local_settings', settings);
+                    if (freshSettings && freshSettings.coupons) {
+                        const coupon = freshSettings.coupons.find(c => c.code === activePromoCode);
+                        if (coupon) {
+                            coupon.usageCount = (coupon.usageCount || 0) + 1;
+                            await apiPost('/api/settings', 'local_settings', freshSettings);
+                            settings = freshSettings; // update global settings object
+                        }
+                    }
+                } catch (err) {
+                    console.error("Failed to increment coupon usage:", err);
+                }
             }
 
             cart = [];

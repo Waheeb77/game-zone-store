@@ -39,8 +39,18 @@ const i18nAdmin = {
     admin_menu_overview: "الإحصائيات العامة",
     admin_menu_products: "إدارة المنتجات",
     admin_menu_orders: "قائمة الطلبات",
+    admin_menu_coupons: "أكواد الخصم",
     admin_menu_settings: "إعدادات المتجر",
     admin_return_store: "العودة للمتجر",
+    admin_tab_coupons_title: "إدارة أكواد الخصم",
+    admin_tab_coupons_desc: "إنشاء وتعديل وحذف كوبونات الخصم للمتجر وتحديد شروط انتهاء الصلاحية وعدد الاستخدامات.",
+    table_coupon_code: "كود الخصم",
+    table_coupon_discount: "نسبة الخصم",
+    table_coupon_limit: "حد الاستخدام",
+    table_coupon_uses: "عدد الاستخدامات",
+    table_coupon_expiry: "تاريخ الانتهاء",
+    table_coupon_status: "الحالة",
+    table_coupon_actions: "الإجراءات",
     
     // Login
     admin_protection: "حماية الإدارة",
@@ -77,8 +87,18 @@ const i18nAdmin = {
     admin_menu_overview: "Statistics & Overview",
     admin_menu_products: "Manage Products",
     admin_menu_orders: "Orders List",
+    admin_menu_coupons: "Promo Codes",
     admin_menu_settings: "Store Settings",
     admin_return_store: "Return to Store",
+    admin_tab_coupons_title: "Discount Codes Management",
+    admin_tab_coupons_desc: "Create, modify, and delete promo/discount codes, set usage limits, or expiry dates.",
+    table_coupon_code: "Promo Code",
+    table_coupon_discount: "Discount",
+    table_coupon_limit: "Usage Limit",
+    table_coupon_uses: "Times Used",
+    table_coupon_expiry: "Expiry Date",
+    table_coupon_status: "Status",
+    table_coupon_actions: "Actions",
     
     // Login
     admin_protection: "Admin Security",
@@ -349,6 +369,10 @@ function switchAdminTab(tabName, element) {
         title.innerText = i18nAdmin[currentLang].admin_tab_settings_title;
         desc.innerText = i18nAdmin[currentLang].admin_tab_settings_desc;
         populateSettingsForm();
+    } else if (tabName === 'coupons') {
+        title.innerText = i18nAdmin[currentLang].admin_tab_coupons_title;
+        desc.innerText = i18nAdmin[currentLang].admin_tab_coupons_desc;
+        renderCouponsTable();
     }
 }
 
@@ -503,6 +527,7 @@ async function saveStoreSettings(event) {
     saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...`;
 
     const updatedSettings = {
+        ...settings, // Keep existing fields like coupons, etc.
         storeName: document.getElementById('settings-store-name').value,
         currency: document.getElementById('settings-currency').value,
         enableCod: document.getElementById('settings-enable-cod').checked,
@@ -1305,4 +1330,172 @@ function printOrderInvoice(orderId) {
 
     // Trigger printing
     window.print();
+}
+
+// --- DISCOUNT COUPON MANAGEMENT ---
+
+// Render Coupons List Table
+function renderCouponsTable() {
+    const tableBody = document.getElementById('coupons-table-body');
+    if (!settings.coupons) settings.coupons = [];
+    
+    if (settings.coupons.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">${currentLang === 'ar' ? 'لا توجد أكواد خصم حالياً. أضف كوداً جديداً للبدء.' : 'No promo codes found. Add a new code to start.'}</td></tr>`;
+        return;
+    }
+
+    tableBody.innerHTML = settings.coupons.map((c, index) => {
+        // Determine status
+        let statusHtml = '';
+        let isExpired = false;
+        let isLimitReached = false;
+        
+        if (c.expiryDate) {
+            const exp = new Date(c.expiryDate);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            if (today > exp) isExpired = true;
+        }
+        
+        if (c.usageLimit && c.usageLimit > 0 && c.usageCount >= c.usageLimit) {
+            isLimitReached = true;
+        }
+
+        if (isExpired) {
+            statusHtml = `<span class="badge" style="background:rgba(239, 68, 68, 0.1); color:#ef4444; border: 1px solid rgba(239, 68, 68, 0.2);">${currentLang === 'ar' ? 'منتهي الصلاحية' : 'Expired'}</span>`;
+        } else if (isLimitReached) {
+            statusHtml = `<span class="badge" style="background:rgba(245, 158, 11, 0.1); color:#f59e0b; border: 1px solid rgba(245, 158, 11, 0.2);">${currentLang === 'ar' ? 'نفذت مرات الاستخدام' : 'Limit Reached'}</span>`;
+        } else {
+            statusHtml = `<span class="badge badge-completed">${currentLang === 'ar' ? 'نشط' : 'Active'}</span>`;
+        }
+
+        const limitText = c.usageLimit && c.usageLimit > 0 ? `${c.usageLimit} ${currentLang === 'ar' ? 'مرات' : 'times'}` : (currentLang === 'ar' ? 'غير محدود' : 'Unlimited');
+        const expiryText = c.expiryDate ? c.expiryDate : (currentLang === 'ar' ? 'غير محدود' : 'Unlimited');
+
+        return `
+            <tr>
+                <td style="font-weight:700; font-family:monospace; font-size:1rem; color:#fff;">${c.code}</td>
+                <td style="font-family:var(--font-tajawal); font-weight:700; color:var(--text-gold);">${c.discount}%</td>
+                <td>${limitText}</td>
+                <td>${c.usageCount || 0}</td>
+                <td>${expiryText}</td>
+                <td>${statusHtml}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="btn-table-action" onclick="openCouponModal('edit', ${index})" title="${currentLang === 'ar' ? 'تعديل الكود' : 'Edit Code'}">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn-table-action delete" onclick="deleteCoupon(${index})" title="${currentLang === 'ar' ? 'حذف الكود' : 'Delete Code'}">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Open Coupon Modal
+function openCouponModal(mode, index = null) {
+    const modal = document.getElementById('coupon-modal-overlay');
+    const title = document.getElementById('coupon-modal-title');
+    const form = document.getElementById('coupon-form');
+
+    form.reset();
+    document.getElementById('coupon-index-field').value = '';
+
+    if (mode === 'add') {
+        title.innerText = currentLang === 'ar' ? "إضافة كود خصم جديد" : "Add New Promo Code";
+    } else if (mode === 'edit') {
+        title.innerText = currentLang === 'ar' ? "تعديل كود الخصم" : "Edit Promo Code";
+        const c = settings.coupons[index];
+        if (!c) return;
+
+        document.getElementById('coupon-index-field').value = index;
+        document.getElementById('coupon-code').value = c.code;
+        document.getElementById('coupon-discount').value = c.discount;
+        document.getElementById('coupon-limit').value = c.usageLimit || '';
+        document.getElementById('coupon-expiry').value = c.expiryDate || '';
+    }
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close Coupon Modal
+function closeCouponModal() {
+    const modal = document.getElementById('coupon-modal-overlay');
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// Save Coupon (Add or Edit)
+async function saveCoupon(event) {
+    event.preventDefault();
+    if (!settings.coupons) settings.coupons = [];
+
+    const indexVal = document.getElementById('coupon-index-field').value;
+    const code = document.getElementById('coupon-code').value.trim().toUpperCase();
+    const discount = parseInt(document.getElementById('coupon-discount').value);
+    const limit = document.getElementById('coupon-limit').value ? parseInt(document.getElementById('coupon-limit').value) : 0;
+    const expiry = document.getElementById('coupon-expiry').value || "";
+
+    // Check if code is already used (only when adding a new one, or editing to a different code name)
+    const existingIndex = settings.coupons.findIndex(c => c.code === code);
+    if (existingIndex > -1 && (indexVal === '' || indexVal != existingIndex)) {
+        alert(currentLang === 'ar' ? "كود الخصم هذا موجود بالفعل!" : "This promo code already exists!");
+        return;
+    }
+
+    const couponData = {
+        code: code,
+        discount: discount,
+        usageLimit: limit,
+        usageCount: indexVal !== '' ? (settings.coupons[indexVal].usageCount || 0) : 0,
+        expiryDate: expiry
+    };
+
+    if (indexVal === '') {
+        // Add mode
+        settings.coupons.push(couponData);
+    } else {
+        // Edit mode
+        settings.coupons[indexVal] = couponData;
+    }
+
+    // Post to server to save settings
+    try {
+        const response = await apiPost('/api/settings', 'local_settings', settings);
+        if (response.success) {
+            closeCouponModal();
+            renderCouponsTable();
+            alert(currentLang === 'ar' ? "تم حفظ كود الخصم بنجاح!" : "Promo code saved successfully!");
+        } else {
+            alert(currentLang === 'ar' ? "فشل حفظ كود الخصم." : "Failed to save promo code.");
+        }
+    } catch (e) {
+        console.error("Save coupon error:", e);
+        alert(currentLang === 'ar' ? "حدث خطأ أثناء حفظ كود الخصم." : "Error saving promo code.");
+    }
+}
+
+// Delete Coupon
+async function deleteCoupon(index) {
+    const confirmMsg = currentLang === 'ar' ? "هل أنت متأكد من حذف كود الخصم هذا؟" : "Are you sure you want to delete this promo code?";
+    if (!confirm(confirmMsg)) return;
+
+    settings.coupons.splice(index, 1);
+
+    try {
+        const response = await apiPost('/api/settings', 'local_settings', settings);
+        if (response.success) {
+            renderCouponsTable();
+            alert(currentLang === 'ar' ? "تم حذف كود الخصم." : "Promo code deleted.");
+        } else {
+            alert(currentLang === 'ar' ? "فشل الحذف." : "Failed to delete.");
+        }
+    } catch (e) {
+        console.error("Delete coupon error:", e);
+        alert(currentLang === 'ar' ? "حدث خطأ أثناء الحذف." : "Error deleting.");
+    }
 }
