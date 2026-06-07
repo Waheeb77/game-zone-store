@@ -3,21 +3,64 @@ import socketserver
 import json
 import os
 import urllib.parse
-import threading  # ميزة أمان مضافة لمنع تلف البيانات عند الطلبات المتزامنة
+from pymongo import MongoClient
 
 PORT = 8000
 STATIC_DIR = os.path.join(os.path.dirname(__file__), 'static')
-PRODUCTS_FILE = os.path.join(os.path.dirname(__file__), 'products.json')
-ORDERS_FILE = os.path.join(os.path.dirname(__file__), 'orders.json')
-SETTINGS_FILE = os.path.join(os.path.dirname(__file__), 'settings.json')
 
-# قفل لمنع الخيوط المتعددة (Threads) من الكتابة أو القراءة من الملفات في نفس اللحظة
-file_lock = threading.Lock()
+# جلب الرابط من بيئة Render، أو استخدام الرابط الخاص بك مباشرة للتجارب المحلية
+MONGO_URI = os.environ.get(
+    "MONGO_URI", 
+    "mongodb+srv://waheeb77:A3qwsa771514@cluster0.zrx42tv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+)
+
+try:
+    # الاتصال بالخادم السحابي
+    client = MongoClient(MONGO_URI)
+    db = client['game_zone_store']
+    # فحص كفاءة الاتصال
+    client.admin.command('ping')
+    print("Successfully connected to MongoDB Atlas!")
+except Exception as e:
+    print(f"MongoDB Connection Error: {e}")
+
+def init_db():
+    """ نظام المهاجرة الذكية والآلية لنقل البيانات القديمة من الـ JSON إلى السحابة """
+    try:
+        if db.products.count_documents({}) == 0:
+            json_prod = os.path.join(os.path.dirname(__file__), 'products.json')
+            if os.path.exists(json_prod):
+                with open(json_prod, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    if data: db.products.insert_many(data)
+                os.rename(json_prod, json_prod + '.bak')
+    except Exception: pass
+
+    try:
+        if db.settings.count_documents({}) == 0:
+            json_sett = os.path.join(os.path.dirname(__file__), 'settings.json')
+            if os.path.exists(json_sett):
+                with open(json_sett, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    for k, v in data.items():
+                        db.settings.insert_one({'key': k, 'value': v})
+                os.rename(json_sett, json_sett + '.bak')
+    except Exception: pass
+        
+    try:
+        if db.orders.count_documents({}) == 0:
+            json_ord = os.path.join(os.path.dirname(__file__), 'orders.json')
+            if os.path.exists(json_ord):
+                with open(json_ord, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    if data: db.orders.insert_many(data)
+                os.rename(json_ord, json_ord + '.bak')
+    except Exception: pass
+
 
 class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     
     def log_message(self, format, *args):
-        # إلغاء تفعيل طباعة السجلات في الـ Terminal لتسريع الأداء ومنع الازدحام
         pass
 
     def _set_headers(self, status=200, content_type='text/html; charset=utf-8'):
@@ -25,7 +68,6 @@ class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.send_header('Content-type', content_type)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        # السماح بترويسة كلمة مرور المدير لمنع حظرها من المتصفحات
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Password')
         self.end_headers()
 
@@ -36,20 +78,17 @@ class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         parsed_url = urllib.parse.urlparse(self.path)
         path = parsed_url.path
 
-        # مسارات واجهة برمجة التطبيقات (API)
         if path == '/api/products':
-            self._handle_get_json(PRODUCTS_FILE)
+            self._handle_get_products()
         elif path == '/api/orders':
-            # ميزة أمان: منع الزوار من رؤية طلبات الزبائن الآخرين، فقط المدير المخول يمكنه ذلك
             if not self._is_admin_authorized():
                 self._set_headers(401, 'application/json')
-                self.wfile.write(json.dumps({"success": False, "error": "غير مصرح لك بالوصول"}).encode('utf-8'))
+                self.wfile.write(json.dumps({"success": False, "error": "غير مصرح لك"}).encode('utf-8'))
                 return
-            self._handle_get_json(ORDERS_FILE)
+            self._handle_get_orders()
         elif path == '/api/settings':
-            self._handle_get_json(SETTINGS_FILE)
+            self._handle_get_settings()
         else:
-            # التعامل مع الملفات الثابتة (Static Files)
             if path == '/' or path == '':
                 filename = 'index.html'
             else:
@@ -57,7 +96,6 @@ class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
             filepath = os.path.join(STATIC_DIR, filename)
             
-            # حماية متقدمة ضد هجمات الـ Directory Traversal لقراءة ملفات النظام الأساسية
             real_filepath = os.path.realpath(filepath)
             real_static_dir = os.path.realpath(STATIC_DIR)
             if not real_filepath.startswith(real_static_dir):
@@ -101,20 +139,12 @@ class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 self.wfile.write(error_html)
 
     def _is_admin_authorized(self):
-        """ دالة التحقق من هوية المدير عبر مطابقة الترويسة مع كلمة المرور المخزنة في الإعدادات """
         admin_pass_header = self.headers.get('X-Admin-Password')
         if not admin_pass_header:
             return False
         
-        password = "admin"  # افتراضي في حال عدم وجود الملف
-        with file_lock:
-            if os.path.exists(SETTINGS_FILE):
-                try:
-                    with open(SETTINGS_FILE, 'r', encoding='utf-8') as f:
-                        s = json.load(f)
-                        password = s.get('adminPassword', 'admin')
-                except Exception:
-                    pass
+        doc = db.settings.find_one({'key': 'adminPassword'})
+        password = doc['value'] if doc else "admin"
         return admin_pass_header == password
 
     def do_POST(self):
@@ -122,7 +152,6 @@ class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         path = parsed_url.path
 
         if path in ['/api/products', '/api/orders', '/api/settings']:
-            # ميزة أمان: فرض التحقق من هوية المدير لتعديل المنتجات أو الإعدادات
             if path in ['/api/products', '/api/settings']:
                 if not self._is_admin_authorized():
                     self._set_headers(401, 'application/json')
@@ -135,39 +164,35 @@ class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 json_data = json.loads(post_data.decode('utf-8'))
                 
                 if path == '/api/products':
-                    self._handle_save_json(PRODUCTS_FILE, json_data)
+                    db.products.delete_many({})
+                    if json_data:
+                        db.products.insert_many(json_data)
+                    self._set_headers(200, 'application/json; charset=utf-8')
+                    self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
+                    
                 elif path == '/api/settings':
-                    self._handle_save_json(SETTINGS_FILE, json_data)
+                    for k, v in json_data.items():
+                        db.settings.update_one({'key': k}, {'$set': {'value': v}}, upsert=True)
+                    self._set_headers(200, 'application/json; charset=utf-8')
+                    self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
+                    
                 elif path == '/api/orders':
                     if isinstance(json_data, list):
-                        # تحديث مصفوفة الطلبات بالكامل (خاص بالمدير لحذف أو تعديل حالة طلب)
                         if not self._is_admin_authorized():
                             self._set_headers(401, 'application/json')
                             self.wfile.write(json.dumps({"success": False, "error": "غير مصرح"}).encode('utf-8'))
                             return
-                        self._handle_save_json(ORDERS_FILE, json_data)
+                        db.orders.delete_many({})
+                        if json_data:
+                            db.orders.insert_many(json_data)
+                        self._set_headers(200, 'application/json; charset=utf-8')
+                        self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
                     else:
-                        # تقديم طلب جديد من زبون (متاح للعامة ولكن يتم فحص وتدقيق البيانات في السيرفر)
-                        validated_order = self._validate_and_recalculate_order(json_data)
+                        validated_order = self._validate_and_recalculate_order_mg(json_data)
                         if not validated_order:
                             self._set_headers(400, 'application/json')
-                            self.wfile.write(json.dumps({"success": False, "error": "البيانات غير صالحة أو الكمية غير متوفرة في المخزن"}).encode('utf-8'))
+                            self.wfile.write(json.dumps({"success": False, "error": "الكمية غير متوفرة أو البيانات غير صالحة"}).encode('utf-8'))
                             return
-                        
-                        # إضافة الطلب للملف بأمان داخل نطاق القفل البرمجي
-                        with file_lock:
-                            orders = []
-                            if os.path.exists(ORDERS_FILE):
-                                try:
-                                    with open(ORDERS_FILE, 'r', encoding='utf-8') as f:
-                                        orders = json.load(f)
-                                except Exception:
-                                    orders = []
-                            orders.append(validated_order)
-                            
-                            with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
-                                json.dump(orders, f, ensure_ascii=False, indent=2)
-                        
                         self._set_headers(200, 'application/json; charset=utf-8')
                         self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
                     
@@ -178,8 +203,8 @@ class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self._set_headers(404, 'text/plain')
             self.wfile.write(b"Endpoint Not Found")
 
-    def _validate_and_recalculate_order(self, order_data):
-        """ ميزة أمان حرجة: حماية السيرفر من تلاعب المتصفح بالأسعار والمخزون """
+    def _validate_and_recalculate_order_mg(self, order_data):
+        """ حماية المخزون والأسعار باستخدام معاملات السحابة المعزولة ومطابقة الأكواد """
         if not order_data.get('customerName') or not order_data.get('customerPhone'):
             return None
 
@@ -187,104 +212,129 @@ class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         if not items:
             return None
 
-        with file_lock:
-            try:
-                with open(PRODUCTS_FILE, 'r', encoding='utf-8') as f:
-                    db_products = json.load(f)
-            except Exception:
-                return None
-            
-            try:
-                with open(SETTINGS_FILE, 'r', encoding='utf-8') as f:
-                    db_settings = json.load(f)
-            except Exception:
-                db_settings = {}
+        with client.start_session() as session:
+            with session.start_transaction():
+                usdToSar_doc = db.settings.find_one({'key': 'usdToSarRate'}, session=session)
+                usdToYer_doc = db.settings.find_one({'key': 'usdToYerRate'}, session=session)
+                usdToSar = usdToSar_doc['value'] if usdToSar_doc else 3.75
+                usdToYer = usdToYer_doc['value'] if usdToYer_doc else 1600.0
 
-        prod_map = {p['id']: p for p in db_products}
-        calculated_subtotal_usd = 0
-        updated_items = []
-        
-        for item in items:
-            p_id = item.get('id')
-            qty = item.get('quantity', 0)
-            if p_id not in prod_map or qty <= 0:
-                return None
-            
-            db_prod = prod_map[p_id]
-            
-            # التحقق الفعلي من توفر الكمية المطلوبة بالمخزن وحجزها بالسيرفر
-            if db_prod.get('stock', 5) < qty:
-                return None
-            
-            db_prod['stock'] -= qty
-            price_usd = db_prod.get('price', 0)
-            calculated_subtotal_usd += price_usd * qty
-            
-            # حساب وتثبيت السعر الحقيقي بناءً على العملة المطلوبة لمنع التلاعب بالقيمة
-            currency = order_data.get('currency', 'USD')
-            item_converted_price = price_usd
-            if currency == 'SAR':
-                item_converted_price = round(price_usd * db_settings.get('usdToSarRate', 3.75))
-            elif currency == 'YER':
-                item_converted_price = round(price_usd * db_settings.get('usdToYerRate', 1600.0))
+                calculated_subtotal_usd = 0
+                updated_items = []
 
-            updated_items.append({
-                "id": p_id,
-                "title": item.get('title', db_prod.get('title')),
-                "price": item_converted_price,
-                "quantity": qty
-            })
+                for item in items:
+                    p_id = item.get('id')
+                    qty = item.get('quantity', 0)
+                    if qty <= 0:
+                        session.abort_transaction()
+                        return None
 
-        # إعادة بناء الحقول بناءً على حسابات الخادم المضمونة وليس مدخلات المتصفح
-        currency = order_data.get('currency', 'USD')
-        final_total = calculated_subtotal_usd
-        if currency == 'SAR':
-            final_total = round(final_total * db_settings.get('usdToSarRate', 3.75))
-        elif currency == 'YER':
-            final_total = round(final_total * db_settings.get('usdToYerRate', 1600.0))
-            
-        order_data['items'] = updated_items
-        order_data['totalPrice'] = final_total
-        
-        # حفظ كميات المخزون الجديدة المحدثة في ملف المنتجات بأمان
-        with file_lock:
-            try:
-                with open(PRODUCTS_FILE, 'w', encoding='utf-8') as f:
-                    json.dump(db_products, f, ensure_ascii=False, indent=2)
-            except Exception:
-                pass
+                    db_prod = db.products.find_one({'id': p_id}, session=session)
+                    if not db_prod or db_prod.get('stock', 0) < qty:
+                        session.abort_transaction()
+                        return None
+
+                    # حجز الكمية وخصمها من السحابة آلياً
+                    db.products.update_one(
+                        {'id': p_id},
+                        {'$inc': {'stock': -qty}},
+                        session=session
+                    )
+
+                    price_usd = db_prod['price']
+                    calculated_subtotal_usd += price_usd * qty
+
+                    currency = order_data.get('currency', 'USD')
+                    item_converted_price = price_usd
+                    if currency == 'SAR': item_converted_price = round(price_usd * usdToSar)
+                    elif currency == 'YER': item_converted_price = round(price_usd * usdToYer)
+
+                    updated_items.append({
+                        "id": p_id,
+                        "title": item.get('title', db_prod['title']),
+                        "price": item_converted_price,
+                        "quantity": qty
+                    })
+
+                # تطبيق خصم كوبون الترويج إن وُجد وكان صالحاً
+                promo_code = order_data.get('promoCode')
+                discount_rate = 0
+                if promo_code:
+                    coupons_doc = db.settings.find_one({'key': 'coupons'}, session=session)
+                    coupons = coupons_doc['value'] if coupons_doc else []
+                    for cp in coupons:
+                        if cp.get('code') == promo_code:
+                            is_valid = True
+                            # التحقق من تاريخ انتهاء الصلاحية
+                            exp_date_str = cp.get('expiryDate')
+                            if exp_date_str:
+                                try:
+                                    import datetime
+                                    exp_date = datetime.datetime.strptime(exp_date_str, "%Y-%m-%d").date()
+                                    if datetime.date.today() > exp_date:
+                                        is_valid = False
+                                except Exception:
+                                    pass
+                            # التحقق من حد الاستخدام
+                            usage_limit = cp.get('usageLimit', 0)
+                            usage_count = cp.get('usageCount', 0)
+                            if usage_limit > 0 and usage_count >= usage_limit:
+                                is_valid = False
+                                
+                            if is_valid:
+                                discount_rate = cp.get('discount', 0) / 100.0
+                                cp['usageCount'] = usage_count + 1
+                                # حفظ الكوبونات المحدثة في قاعدة البيانات السحابية
+                                db.settings.update_one(
+                                    {'key': 'coupons'},
+                                    {'$set': {'value': coupons}},
+                                    session=session
+                                )
+                            break
+
+                currency = order_data.get('currency', 'USD')
+                final_total = calculated_subtotal_usd
+                if discount_rate > 0:
+                    final_total = final_total - (final_total * discount_rate)
+
+                if currency == 'SAR': final_total = round(final_total * usdToSar)
+                elif currency == 'YER': final_total = round(final_total * usdToYer)
+
+                order_data['items'] = updated_items
+                order_data['totalPrice'] = final_total
+
+                # تسجيل الطلب دائمياً في السحابة
+                db.orders.insert_one(order_data, session=session)
                 
-        return order_data
+                if '_id' in order_data:
+                    del order_data['_id']
 
-    def _handle_get_json(self, filepath):
-        with file_lock:
-            if not os.path.exists(filepath):
-                initial_data = [] if filepath != SETTINGS_FILE else {}
-                try:
-                    with open(filepath, 'w', encoding='utf-8') as f:
-                        json.dump(initial_data, f, ensure_ascii=False, indent=2)
-                except Exception:
-                    pass
+                return order_data
+
+    def _handle_get_products(self):
+        products = list(db.products.find({}, {'_id': 0}))
+        self._set_headers(200, 'application/json; charset=utf-8')
+        self.wfile.write(json.dumps(products, ensure_ascii=False, indent=2).encode('utf-8'))
+
+    def _handle_get_orders(self):
+        orders = list(db.orders.find({}, {'_id': 0}))
+        self._set_headers(200, 'application/json; charset=utf-8')
+        self.wfile.write(json.dumps(orders, ensure_ascii=False, indent=2).encode('utf-8'))
+
+    def _handle_get_settings(self):
+        settings = {}
+        for doc in db.settings.find({}, {'_id': 0}):
+            settings[doc['key']] = doc['value']
             
-            try:
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                self._set_headers(200, 'application/json; charset=utf-8')
-                self.wfile.write(content.encode('utf-8'))
-            except Exception as e:
-                self._set_headers(500, 'application/json')
-                self.wfile.write(json.dumps({"success": False, "error": str(e)}).encode('utf-8'))
-
-    def _handle_save_json(self, filepath, data):
-        with file_lock:
-            try:
-                with open(filepath, 'w', encoding='utf-8') as f:
-                    json.dump(data, f, ensure_ascii=False, indent=2)
-                self._set_headers(200, 'application/json; charset=utf-8')
-                self.wfile.write(json.dumps({"success": True}).encode('utf-8'))
-            except Exception as e:
-                self._set_headers(500, 'application/json')
-                self.wfile.write(json.dumps({"success": False, "error": str(e)}).encode('utf-8'))
+        if not settings:
+            settings = {
+                "storeName": "Game Zone Store", "currency": "USD",
+                "enableCod": True, "enableBank": True, "enableCard": True,
+                "usdToSarRate": 3.75, "usdToYerRate": 1600.0,
+                "enableBcash": True, "enableQurooshi": True, "enableKuraimi": True
+            }
+        self._set_headers(200, 'application/json; charset=utf-8')
+        self.wfile.write(json.dumps(settings, ensure_ascii=False, indent=2).encode('utf-8'))
 
 
 class ThreadingTCPServer(socketserver.ThreadingTCPServer):
@@ -293,8 +343,9 @@ class ThreadingTCPServer(socketserver.ThreadingTCPServer):
 
 if __name__ == '__main__':
     os.makedirs(STATIC_DIR, exist_ok=True)
+    init_db()  # تشغيل نظام التحقق والمهاجرة للبيانات القديمة
     with ThreadingTCPServer(("", PORT), StoreHTTPRequestHandler) as httpd:
-        print(f"Server is running at: http://localhost:{PORT}")
+        print(f"Server is running globally and securely via MongoDB Atlas at http://localhost:{PORT}")
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:

@@ -188,7 +188,10 @@ function translateAdminPage() {
 // Hybrid API and LocalStorage helper functions for static page safety
 async function apiGet(endpoint, fallbackKey, defaultVal) {
     try {
-        const response = await fetch(endpoint);
+        const password = sessionStorage.getItem('admin_password') || 'admin';
+        const response = await fetch(endpoint, {
+            headers: { 'X-Admin-Password': password }
+        });
         if (response.ok) {
             const data = await response.json();
             
@@ -230,9 +233,13 @@ async function apiGet(endpoint, fallbackKey, defaultVal) {
 async function apiPost(endpoint, fallbackKey, data) {
     localStorage.setItem(fallbackKey, JSON.stringify(data));
     try {
+        const password = sessionStorage.getItem('admin_password') || 'admin';
         const response = await fetch(endpoint, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Admin-Password': password
+            },
             body: JSON.stringify(data)
         });
         if (response.ok) {
@@ -264,8 +271,18 @@ function handleAdminLogin(event) {
     
     if (enteredPassword === correctPassword) {
         sessionStorage.setItem('admin_authenticated', 'true');
+        sessionStorage.setItem('admin_password', enteredPassword);
         checkAdminAuthentication();
         errorMsg.style.display = 'none';
+        
+        // Reload settings and data with the newly authenticated password
+        fetchSettings().then(() => {
+            fetchProducts().then(() => {
+                fetchOrders().then(() => {
+                    translateAdminPage();
+                });
+            });
+        });
     } else {
         errorMsg.style.display = 'block';
         passwordField.value = '';
