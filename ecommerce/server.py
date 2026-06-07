@@ -63,12 +63,13 @@ class StoreHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
 
-    def _set_headers(self, status=200, content_type='text/html; charset=utf-8'):
+    def _set_headers(self, status=200, content_type='text/html; charset=utf-8', cache_control='no-cache, no-store, must-revalidate'):
         self.send_response(status)
         self.send_header('Content-type', content_type)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, X-Admin-Password')
+        self.send_header('Cache-Control', cache_control)
         self.end_headers()
 
     def do_OPTIONS(self):
